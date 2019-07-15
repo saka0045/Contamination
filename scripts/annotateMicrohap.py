@@ -47,8 +47,20 @@ def main():
 
     print(microhap_dict)
 
+    final_rsid = []
+    for snp in microhap_dict.values():
+        final_rsid.extend(snp)
+
+    print(final_rsid)
+    print(len(final_rsid))
+
+    final_rsid_file = open("/Users/m006703/Contamination/files/final_rsid.txt", "w")
+    for snp in final_rsid:
+        final_rsid_file.write(snp + "\n")
+
     rsid_file.close()
     large_cancer_rsid_file.close()
+    final_rsid_file.close()
 
 
 if __name__ == "__main__":
