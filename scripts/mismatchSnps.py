@@ -19,6 +19,7 @@ for line in final_rsid_file:
 # print(len(final_rsid_snps))
 
 # Make vcf file header
+vcf_file.write("##fileformat=VCFv4.1\n")
 vcf_file.write("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\n")
 
 grepped_rsid_snps = []
@@ -31,8 +32,6 @@ for line in grepped_rsid_file:
     grepped_snp_id = snp_info_dict["ID"]
     chrom_number = str(line_item[0])
     chrom = "chr" + chrom_number
-    start_pos = line_item[1]
-    stop_pos = line_item[2]
     pos = snp_info_dict["POS"]
     ref = snp_info_dict["REF"]
     alt = snp_info_dict["ALT"]
@@ -40,15 +39,17 @@ for line in grepped_rsid_file:
     filter_text = snp_info_dict["FILTER"]
     info = "."
     format = "."
+    start_pos = int(pos) - 1
+    stop_pos = int(pos)
     # make vcf file
     vcf_file.write(chrom + "\t" + pos + "\t" + grepped_snp_id + "\t" + ref + "\t" + alt + "\t" + qual + "\t" +
                    filter_text + "\t" + info + "\t" + format + "\n")
     # for bed file, don't repeat regions
     if grepped_snp_id not in grepped_rsid_snps:
         grepped_rsid_snps.append(grepped_snp_id)
-        if start_pos != stop_pos:
+        if start_pos + 1 != stop_pos:
             print(grepped_snp_id + " is not a snp")
-        bed_file.write(chrom + "\t" + start_pos + "\t" + stop_pos + "\t" + grepped_snp_id + "\n")
+        bed_file.write(chrom + "\t" + str(start_pos) + "\t" + str(stop_pos) + "\t" + grepped_snp_id + "\n")
     else:
         print(grepped_snp_id + " is repeated in dbSNP")
 
