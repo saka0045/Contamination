@@ -1,2 +1,6 @@
 .DS_Store
 .idea*
+biorann_config/*
+files/ordered_service/*
+logs/*
+.bior*
