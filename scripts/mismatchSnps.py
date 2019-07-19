@@ -58,9 +58,12 @@ for line in grepped_rsid_file:
             if grepped_snp_id in microhap_dict[key]:
                 microhap_site_list.append(key)
                 continue
-        for index in range(len(microhap_site_list)):
-            microhap_site_list[index] = microhap_site_list[index] + "[" + \
-                                        str(len(microhap_dict[microhap_site_list[index]])) + "]"
+        if microhap_site_list == []:
+            microhap_site_list = ["na"]
+        else:
+            for index in range(len(microhap_site_list)):
+                microhap_site_list[index] = microhap_site_list[index] + "[" + \
+                                            str(len(microhap_dict[microhap_site_list[index]])) + "]"
         bed_file.write(chrom + "\t" + str(start_pos) + "\t" + str(stop_pos) + "\t" + grepped_snp_id +
                        "\t" + ",".join(microhap_site_list) + "\n")
     else:
