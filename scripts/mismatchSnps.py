@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
 import json
+from annotateMicrohap import make_microhap_dict
 
 final_rsid_file = open("/Users/m006703/Contamination/files/final_rsid.txt", "r")
 grepped_rsid_file = open("/Users/m006703/Contamination/files/grepped_final_rsid.txt", "r")
 bed_file = open("/Users/m006703/Contamination/files/contamination_target.bed", "w")
 vcf_file = open("/Users/m006703/Contamination/files/contamination.vcf", "w")
+microhap_file_path = "/Users/m006703/Contamination/files/microhaps_rsid.tsv"
 
 final_rsid_snps = []
 for line in final_rsid_file:
@@ -21,6 +23,8 @@ for line in final_rsid_file:
 # Make vcf file header
 vcf_file.write("##fileformat=VCFv4.1\n")
 vcf_file.write("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\n")
+
+microhap_dict = make_microhap_dict(microhap_file_path)
 
 grepped_rsid_snps = []
 for line in grepped_rsid_file:
@@ -49,7 +53,16 @@ for line in grepped_rsid_file:
         grepped_rsid_snps.append(grepped_snp_id)
         if start_pos + 1 != stop_pos:
             print(grepped_snp_id + " is not a snp")
-        bed_file.write(chrom + "\t" + str(start_pos) + "\t" + str(stop_pos) + "\t" + grepped_snp_id + "\n")
+        microhap_site_list = []
+        for key in microhap_dict.keys():
+            if grepped_snp_id in microhap_dict[key]:
+                microhap_site_list.append(key)
+                continue
+        for index in range(len(microhap_site_list)):
+            microhap_site_list[index] = microhap_site_list[index] + "[" + \
+                                        str(len(microhap_dict[microhap_site_list[index]])) + "]"
+        bed_file.write(chrom + "\t" + str(start_pos) + "\t" + str(stop_pos) + "\t" + grepped_snp_id +
+                       "\t" + ",".join(microhap_site_list) + "\n")
     else:
         print(grepped_snp_id + " is repeated in dbSNP")
 

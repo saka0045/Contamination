@@ -4,3 +4,4 @@ biorann_config/*
 files/ordered_service/*
 logs/*
 .bior*
+scripts/__pycache__/

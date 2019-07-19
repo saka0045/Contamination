@@ -15,17 +15,7 @@ def main():
     input_file = os.path.abspath(args.input_file)
     large_cancer_file = "/Users/m006703/Contamination/files/large_cancer.tsv"
 
-    rsid_file = open(input_file, 'r')
-    microhap_dict = {}
-    # Skip the header line
-    rsid_file.readline()
-    for line in rsid_file:
-        line = line.rstrip()
-        line_item = line.split("\t")
-        microhap = line_item[0]
-        microhap_dict[microhap] = []
-        for index in range (1, len(line_item)):
-            microhap_dict[microhap].append(line_item[index])
+    microhap_dict = make_microhap_dict(input_file)
 
     large_cancer_rsid_file = open(large_cancer_file, 'r')
     large_cancer_rsid = []
@@ -58,9 +48,24 @@ def main():
     for snp in final_rsid:
         final_rsid_file.write(snp + "\n")
 
-    rsid_file.close()
     large_cancer_rsid_file.close()
     final_rsid_file.close()
+
+
+def make_microhap_dict(input_file):
+    rsid_file = open(input_file, 'r')
+    microhap_dict = {}
+    # Skip the header line
+    rsid_file.readline()
+    for line in rsid_file:
+        line = line.rstrip()
+        line_item = line.split("\t")
+        microhap = line_item[0]
+        microhap_dict[microhap] = []
+        for index in range(1, len(line_item)):
+            microhap_dict[microhap].append(line_item[index])
+    rsid_file.close()
+    return microhap_dict
 
 
 if __name__ == "__main__":
