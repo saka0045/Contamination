@@ -5,4 +5,5 @@ files/ordered_service/*
 logs/*
 .bior*
 scripts/__pycache__/
-Hereditary/*.bed
+Hereditary/probes.bed
+Hereditary/target.bed
