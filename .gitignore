@@ -6,3 +6,4 @@ logs/*
 .bior*
 scripts/__pycache__/
 Hereditary/*.bed
+Publications/*
