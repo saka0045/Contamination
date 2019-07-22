@@ -53,17 +53,18 @@ for line in grepped_rsid_file:
         grepped_rsid_snps.append(grepped_snp_id)
         if start_pos + 1 != stop_pos:
             print(grepped_snp_id + " is not a snp")
+        # Annotate the BED file with {MicroHapSnpID}:{NumberOfSnps}
         microhap_site_list = []
         for key in microhap_dict.keys():
             if grepped_snp_id in microhap_dict[key]:
                 microhap_site_list.append(key)
-                continue
+                continue  # Account for SNPs that are in multiple Microhap sites
         if microhap_site_list == []:
             microhap_site_list = ["na"]
         else:
             for index in range(len(microhap_site_list)):
-                microhap_site_list[index] = microhap_site_list[index] + "[" + \
-                                            str(len(microhap_dict[microhap_site_list[index]])) + "]"
+                microhap_site_list[index] = microhap_site_list[index] + ":" + \
+                                            str(len(microhap_dict[microhap_site_list[index]]))
         bed_file.write(chrom + "\t" + str(start_pos) + "\t" + str(stop_pos) + "\t" + grepped_snp_id +
                        "\t" + ",".join(microhap_site_list) + "\n")
     else:
