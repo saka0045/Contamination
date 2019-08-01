@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+"""
+Takes in a tab delimited microhap rsid file (microhap site on the first column followed by snps associated in that
+microhap site in the following columns) and creates a list of the rsid for the snps
+"""
+
 import argparse
 import os
 
