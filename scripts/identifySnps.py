@@ -6,6 +6,8 @@ a new microhap rsid file
 
 import argparse
 
+from annotateMicrohap import make_microhap_dict
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -17,11 +19,16 @@ def main():
         "-r", "--rsidFile", dest="rsid_file", required=True,
         help="Path to the output microhap site rsid file"
     )
+    parser.add_argument(
+        "-l", "--rsidListFile", dest="rsid_list_file", required=True,
+        help="File that lists the SNP RSIDs, use to grep the grepped RSID file"
+    )
 
     args = parser.parse_args()
 
     snp_file = open(args.snp_file, "r")
     rsid_file = open(args.rsid_file, "w")
+    rsid_list_file = open(args.rsid_list_file, "w")
 
     # Gather information from the grepped BED file
     bed_file_info = gather_bed_file_info(snp_file)
@@ -29,6 +36,24 @@ def main():
     print(bed_file_info)
 
     # Make Microhap rsid tsv file filtered for complete Microhap sites
+    make_microhap_rsid_file(bed_file_info, rsid_file)
+
+    rsid_file.close()
+
+    # Make the list of RSID SNPs
+    rsid_file = open(args.rsid_file, "r")
+    microhap_dict = make_microhap_dict(rsid_file)
+
+    for list_of_snp in microhap_dict.values():
+        for snp in list_of_snp:
+            rsid_list_file.write(snp + "\n")
+
+    snp_file.close()
+    rsid_file.close()
+    rsid_list_file.close()
+
+
+def make_microhap_rsid_file(bed_file_info, rsid_file):
     for microhap in bed_file_info.keys():
         if microhap == "na":
             rsid_file.write("na")
@@ -47,9 +72,6 @@ def main():
                     rsid = snp["rsid"]
                     rsid_file.write("\t" + rsid)
                 rsid_file.write("\n")
-
-    snp_file.close()
-    rsid_file.close()
 
 
 def gather_bed_file_info(snp_file):
