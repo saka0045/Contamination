@@ -3,6 +3,7 @@
 import os
 import argparse
 import subprocess
+import sys
 from pathlib import Path
 from multiprocessing import Pool
 
@@ -21,13 +22,13 @@ NOTE: seqtk path hardcoded
 
 def main():
 
-    sample1, sample2, out_path, reference, percent = get_args()
+    sample1, sample2, out_path, percent = get_args() # took out reference from Gopi's script
     io_obj = PrepareInputOutput(sample1, sample2, percent, out_path)
     out_path = io_obj.prep_output_folders()
     fastq_pair_dict = io_obj.mix_content_dict
 
     print(f"\n-----------Percent: {percent}------------")
-    mix_obj = MixSample(fastq_pair_dict, int(percent), reference, out_path)
+    mix_obj = MixSample(fastq_pair_dict, int(percent), out_path) # took out reference
     mix_obj.mix_samples()
 
 
@@ -37,12 +38,13 @@ def get_args():
     parser = argparse.ArgumentParser(usage=Usage)
     parser.add_argument('-a', '--sample1', dest="s1", help="path to sample1 R1 file.", required=True)
     parser.add_argument('-b', '--sample2', dest="s2", help="path to sample2 R1 file.", required=True)
-    parser.add_argument('-r', '--ref', dest="ref", help="path to reference file ", required=True)
+    # parser.add_argument('-r', '--ref', dest="ref", help="path to reference file ", required=True)
     parser.add_argument("-p", '--percentages', dest="percentages", help="contamination percent seperated by comma", required=True)
     parser.add_argument("-o", '--outpath', dest="out", help="path to output", required=True)
     options = parser.parse_args()
 
-    return os.path.abspath(options.s1), os.path.abspath(options.s2), os.path.abspath(options.out), os.path.abspath(options.ref), options.percentages
+    return os.path.abspath(options.s1), os.path.abspath(options.s2), os.path.abspath(options.out), options.percentages
+    # return os.path.abspath(options.ref)
 
 
 class PrepareInputOutput():
@@ -84,8 +86,9 @@ class PrepareInputOutput():
 
 class MixSample():
 
-    def __init__(self, sample_pair_dict, percent, ref, out_path):
-        self.reference = ref
+    def __init__(self, sample_pair_dict, percent, out_path):
+        # took out ref
+        # self.reference = ref
         self.percent = percent
         self.out_path = out_path
         self.sample_pair_dict = sample_pair_dict
@@ -127,9 +130,10 @@ class MixSample():
                 out2, err2 = self.subprocess_cmd(s2_qsub)
                 self.job_ids.append(out2.split(' ')[2].strip())
             print(f'\ns1_qsub:\n {s1_qsub}\n out1-{out1}, error- {err1} \n\n s2_qsub:\n{s2_qsub}\n out2-{out2}, error {err2}')
-        
-        self.process_fastq()
 
+        # Silencing processing of fastqs
+        # self.process_fastq()
+    """
     def process_fastq(self):
 
         r1_fastq, sample_name = self.get_out_fastq_name('R1.fq')
@@ -152,6 +156,7 @@ class MixSample():
         out4, err4 = self.subprocess_cmd(sentieon_qsub)
         print(f'\nsentieon_cmd:\n {sentieon_qsub}, out-{out4}, err-{err4}')
         sentieon_job_id = out4.split(' ')[2].strip()
+    """
 
     def get_read_count(self, sample_fq):
         cmd = "zcat " + sample_fq + " | wc -l"
