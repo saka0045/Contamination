@@ -36,11 +36,19 @@ def get_args():
     Usage = '''\n\npython MixSamples.py -a <Test1_path> -b <Test2_path> -o <OutPutPath>\n
     ****** Please use qsub to run this script as it requires more memory depending on input data size ****'''
     parser = argparse.ArgumentParser(usage=Usage)
-    parser.add_argument('-a', '--sample1', dest="s1", help="path to sample1 R1 file.", required=True)
-    parser.add_argument('-b', '--sample2', dest="s2", help="path to sample2 R1 file.", required=True)
+    parser.add_argument('-a', '--sample1', dest="s1",
+                        help="path to sample1 R1 file.", required=True
+                        )
+    parser.add_argument('-b', '--sample2', dest="s2",
+                        help="path to sample2 R1 file.", required=True
+                        )
     # parser.add_argument('-r', '--ref', dest="ref", help="path to reference file ", required=True)
-    parser.add_argument("-p", '--percentages', dest="percentages", help="contamination percent seperated by comma", required=True)
-    parser.add_argument("-o", '--outpath', dest="out", help="path to output", required=True)
+    parser.add_argument("-p", '--percentages', dest="percentages",
+                        help="contamination percent of the second sample", required=True
+                        )
+    parser.add_argument("-o", '--outpath', dest="out",
+                        help="path to output", required=True
+                        )
     options = parser.parse_args()
 
     return os.path.abspath(options.s1), os.path.abspath(options.s2), os.path.abspath(options.out), options.percentages
@@ -121,12 +129,14 @@ class MixSample():
 
             if self.percent != 0:
                 s1_cmd = f'{self.seqtk} sample -s {str(seed)} {sample1} {str(s1_required_reads)}'
-                s1_qsub = f'qsub -V -b y -q sandbox.q -N py-seqtk-{self.percent}-f1 -l h_vmem=150G -l h_stack=15M -m ea -e {self.logs} -o {out_fastq}.tmp.fq1 "{s1_cmd}"'
+                s1_qsub = f'qsub -V -b y -q sandbox.q -N py-seqtk-{self.percent}-f1 -l h_vmem=150G -l h_stack=15M -m ea ' \
+                    f'-M sakai.yuta@mayo.edu -e {self.logs} -o {out_fastq}.tmp.fq1 "{s1_cmd}"'
                 out1, err1 = self.subprocess_cmd(s1_qsub)
                 self.job_ids.append(out1.split(' ')[2].strip())
             if self.percent != 100:
                 s2_cmd = f'{self.seqtk} sample -s {str(seed)} {sample2} {str(s2_required_reads)}'
-                s2_qsub = f'qsub -V -b y -q sandbox.q -N py-seqtk-{self.percent}-f2 -l h_vmem=150G -l h_stack=15M -m ea -e {self.logs} -o {out_fastq}.tmp.fq2 "{s2_cmd}"'
+                s2_qsub = f'qsub -V -b y -q sandbox.q -N py-seqtk-{self.percent}-f2 -l h_vmem=150G -l h_stack=15M ' \
+                    f'-m ea -M sakai.yuta@mayo.edu -e {self.logs} -o {out_fastq}.tmp.fq2 "{s2_cmd}"'
                 out2, err2 = self.subprocess_cmd(s2_qsub)
                 self.job_ids.append(out2.split(' ')[2].strip())
             print(f'\ns1_qsub:\n {s1_qsub}\n out1-{out1}, error- {err1} \n\n s2_qsub:\n{s2_qsub}\n out2-{out2}, error {err2}')
