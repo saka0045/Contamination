@@ -8,7 +8,8 @@ SAMPLE1_DIR=""
 SCRIPT_DIR=""
 OUTDIR=""
 SAMPLE1_NAME=""
-RESULT1_FILE=""
+R1_RESULT1_FILE=""
+R2_RESULT1_FILE=""
 R1_FASTQ=""
 CMD=""
 
@@ -78,23 +79,25 @@ echo "Executing command: ${CMD}"
 ${CMD}
 
 # Make result file
-RESULT1_FILE=${OUTDIR}/${SAMPLE1_NAME}_combined_fastq_results.txt
-touch ${RESULT1_FILE}
-echo "Line count for ${R1_FASTQ}:" >> ${RESULT1_FILE}
+R1_RESULT1_FILE=${OUTDIR}/${SAMPLE1_NAME}_combined_R1_fastq_results.txt
+touch ${R1_RESULT1_FILE}
+echo "Line count for ${R1_FASTQ}:" >> ${R1_RESULT1_FILE}
 
 # qsub and count the lines in the R1 fastq file
 echo "Counting lines in ${R1_FASTQ}"
 # wait for concatenateFastq to finish before qsubbing this
-CMD="qsub -hold_jid concatenateR1Fastq -V -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -q sandbox.q -N countFastqLine ${SCRIPT_DIR}/count_fastq_lines.sh -o ${OUTDIR} -f ${R1_FASTQ} -r ${RESULT1_FILE}"
+CMD="qsub -hold_jid concatenateR1Fastq -V -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -q sandbox.q -N countFastqLine ${SCRIPT_DIR}/count_fastq_lines.sh -o ${OUTDIR} -f ${R1_FASTQ} -r ${R1_RESULT1_FILE}"
 echo "Executing command: ${CMD}"
 ${CMD}
 
 # Entry for R2
-echo "Line count for ${R2_FASTQ}:" >> ${RESULT1_FILE}
+R2_RESULT1_FILE=${OUTDIR}/${SAMPLE1_NAME}_combined_R2_fastq_results.txt
+touch ${R2_RESULT1_FILE}
+echo "Line count for ${R2_FASTQ}:" >> ${R2_RESULT1_FILE}
 
 # qsub and count the lines in the R2 fastq file
 echo "Counting lines in ${R1_FASTQ}"
 # wait for concatenateFastq to finish before qsubbing this
-CMD="qsub -hold_jid concatenateR2Fastq -V -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -q sandbox.q -N countFastqLine ${SCRIPT_DIR}/count_fastq_lines.sh -o ${OUTDIR} -f ${R2_FASTQ} -r ${RESULT1_FILE}"
+CMD="qsub -hold_jid concatenateR2Fastq -V -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -q sandbox.q -N countFastqLine ${SCRIPT_DIR}/count_fastq_lines.sh -o ${OUTDIR} -f ${R2_FASTQ} -r ${R2_RESULT1_FILE}"
 echo "Executing command: ${CMD}"
 ${CMD}
