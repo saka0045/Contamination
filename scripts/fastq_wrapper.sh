@@ -7,6 +7,7 @@
 SAMPLE1_DIR=""
 SCRIPT_DIR=""
 OUTDIR=""
+LOG_DIR=""
 SAMPLE1_NAME=""
 R1_RESULT1_FILE=""
 R2_RESULT1_FILE=""
@@ -56,6 +57,10 @@ fi
 # Directory of script
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+# Make directory for log files
+mkdir ${OUTDIR}/logs
+LOG_DIR=${OUTDIR}/logs
+
 #Get sample1 name
 SAMPLE1_NAME=${SAMPLE1_DIR##*/}
 R1_FASTQ=${SAMPLE1_NAME}_combined_R1.temp.fastq
@@ -66,7 +71,7 @@ echo "Sample name: $SAMPLE1_NAME"
 echo "Processing R1 fastqs in directory: $SAMPLE1_DIR"
 find $SAMPLE1_DIR -maxdepth 1 -name "*R1*.fastq.gz" | sort
 echo "Saving concatenated fastq file at: $OUTDIR/${R1_FASTQ}"
-CMD="qsub -V -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -q sandbox.q -N concatenateR1Fastq ${SCRIPT_DIR}/concatenate_fastq.sh -d ${SAMPLE1_DIR} -o ${OUTDIR} -r R1 -f ${R1_FASTQ}"
+CMD="qsub -V -m abe -M sakai.yuta@mayo.edu -wd ${LOG_DIR} -q sandbox.q -N concatenateR1Fastq ${SCRIPT_DIR}/concatenate_fastq.sh -d ${SAMPLE1_DIR} -o ${OUTDIR} -r R1 -f ${R1_FASTQ}"
 echo "Executing command: ${CMD}"
 ${CMD}
 
@@ -74,7 +79,7 @@ ${CMD}
 echo "Processing R2 fastqs in directory: ${SAMPLE1_DIR}"
 find $SAMPLE1_DIR -maxdepth 1 -name "*R2*.fastq.gz" | sort
 echo "Saving concatenated fastq file at: $OUTDIR/${R2_FASTQ}"
-CMD="qsub -V -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -q sandbox.q -N concatenateR2Fastq ${SCRIPT_DIR}/concatenate_fastq.sh -d ${SAMPLE1_DIR} -o ${OUTDIR} -r R2 -f ${R2_FASTQ}"
+CMD="qsub -V -m abe -M sakai.yuta@mayo.edu -wd ${LOG_DIR} -q sandbox.q -N concatenateR2Fastq ${SCRIPT_DIR}/concatenate_fastq.sh -d ${SAMPLE1_DIR} -o ${OUTDIR} -r R2 -f ${R2_FASTQ}"
 echo "Executing command: ${CMD}"
 ${CMD}
 
@@ -86,7 +91,7 @@ echo "Line count for ${R1_FASTQ}:" >> ${R1_RESULT1_FILE}
 # qsub and count the lines in the R1 fastq file
 echo "Counting lines in ${R1_FASTQ}"
 # wait for concatenateFastq to finish before qsubbing this
-CMD="qsub -hold_jid concatenateR1Fastq -V -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -q sandbox.q -N countR1FastqLine ${SCRIPT_DIR}/count_fastq_lines.sh -o ${OUTDIR} -f ${R1_FASTQ} -r ${R1_RESULT1_FILE}"
+CMD="qsub -hold_jid concatenateR1Fastq -V -m abe -M sakai.yuta@mayo.edu -wd ${LOG_DIR} -q sandbox.q -N countR1FastqLine ${SCRIPT_DIR}/count_fastq_lines.sh -o ${OUTDIR} -f ${R1_FASTQ} -r ${R1_RESULT1_FILE}"
 echo "Executing command: ${CMD}"
 ${CMD}
 
@@ -98,6 +103,6 @@ echo "Line count for ${R2_FASTQ}:" >> ${R2_RESULT1_FILE}
 # qsub and count the lines in the R2 fastq file
 echo "Counting lines in ${R2_FASTQ}"
 # wait for concatenateFastq to finish before qsubbing this
-CMD="qsub -hold_jid concatenateR2Fastq -V -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -q sandbox.q -N countR2FastqLine ${SCRIPT_DIR}/count_fastq_lines.sh -o ${OUTDIR} -f ${R2_FASTQ} -r ${R2_RESULT1_FILE}"
+CMD="qsub -hold_jid concatenateR2Fastq -V -m abe -M sakai.yuta@mayo.edu -wd ${LOG_DIR} -q sandbox.q -N countR2FastqLine ${SCRIPT_DIR}/count_fastq_lines.sh -o ${OUTDIR} -f ${R2_FASTQ} -r ${R2_RESULT1_FILE}"
 echo "Executing command: ${CMD}"
 ${CMD}
