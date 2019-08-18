@@ -60,6 +60,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # Make directory for log files
 mkdir ${OUTDIR}/logs
 LOG_DIR=${OUTDIR}/logs
+echo "Making logs directory at: ${LOG_DIR}"
 
 #Get sample1 name
 SAMPLE1_NAME=${SAMPLE1_DIR##*/}
