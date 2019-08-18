@@ -23,8 +23,8 @@ different reads
 
 OPTIONS:
     -h  [optional] help, show this message
-    -d  [required] input directory
-	-o  [required] output directory
+    -a  [required] input directory for sample 1
+    -o  [required] output directory
 
 EOF
 }
