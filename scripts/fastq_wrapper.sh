@@ -86,7 +86,7 @@ echo "Line count for ${R1_FASTQ}:" >> ${R1_RESULT1_FILE}
 # qsub and count the lines in the R1 fastq file
 echo "Counting lines in ${R1_FASTQ}"
 # wait for concatenateFastq to finish before qsubbing this
-CMD="qsub -hold_jid concatenateR1Fastq -V -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -q sandbox.q -N countFastqLine ${SCRIPT_DIR}/count_fastq_lines.sh -o ${OUTDIR} -f ${R1_FASTQ} -r ${R1_RESULT1_FILE}"
+CMD="qsub -hold_jid concatenateR1Fastq -V -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -q sandbox.q -N countR1FastqLine ${SCRIPT_DIR}/count_fastq_lines.sh -o ${OUTDIR} -f ${R1_FASTQ} -r ${R1_RESULT1_FILE}"
 echo "Executing command: ${CMD}"
 ${CMD}
 
@@ -96,8 +96,8 @@ touch ${R2_RESULT1_FILE}
 echo "Line count for ${R2_FASTQ}:" >> ${R2_RESULT1_FILE}
 
 # qsub and count the lines in the R2 fastq file
-echo "Counting lines in ${R1_FASTQ}"
+echo "Counting lines in ${R2_FASTQ}"
 # wait for concatenateFastq to finish before qsubbing this
-CMD="qsub -hold_jid concatenateR2Fastq -V -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -q sandbox.q -N countFastqLine ${SCRIPT_DIR}/count_fastq_lines.sh -o ${OUTDIR} -f ${R2_FASTQ} -r ${R2_RESULT1_FILE}"
+CMD="qsub -hold_jid concatenateR2Fastq -V -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -q sandbox.q -N countR2FastqLine ${SCRIPT_DIR}/count_fastq_lines.sh -o ${OUTDIR} -f ${R2_FASTQ} -r ${R2_RESULT1_FILE}"
 echo "Executing command: ${CMD}"
 ${CMD}
