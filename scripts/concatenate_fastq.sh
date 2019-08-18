@@ -20,7 +20,8 @@ OPTIONS:
     -h  [optional] help, show this message
     -d  [required] input directory
     -o  [required] output directory
-    -r  [required] name of the concatenated fastq file
+    -f  [required] name of the concatenated fastq file
+    -r  [required] R1 or R2
 
 EOF
 }
@@ -29,13 +30,14 @@ EOF
 #BEGIN PROCESSING
 ##################################################
 
-while getopts "hd:o:r:" OPTION
+while getopts "hd:o:f:r:" OPTION
 do
     case $OPTION in
         h) usage ; exit ;;
         d) DIR=${OPTARG} ;;
         o) OUTDIR=${OPTARG} ;;
-        r) RESULT_FASTQ=${OPTARG} ;;
+        f) RESULT_FASTQ=${OPTARG} ;;
+        r) READ=${OPTARG} ;;
     esac
 done
 
@@ -51,4 +53,4 @@ fi
 
 SAMPLE_NAME=${DIR##*/}
 
-/bin/find $DIR -maxdepth 1 -name "*R1*.fastq.gz" | /bin/sort | xargs /bin/zcat > ${OUTDIR}/${RESULT_FASTQ}
+/bin/find $DIR -maxdepth 1 -name "*${READ}*.fastq.gz" | /bin/sort | xargs /bin/zcat > ${OUTDIR}/${RESULT_FASTQ}

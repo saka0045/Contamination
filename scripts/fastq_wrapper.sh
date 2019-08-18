@@ -65,7 +65,7 @@ echo "Sample name: $SAMPLE1_NAME"
 echo "Processing R1 fastqs in directory: $SAMPLE1_DIR"
 find $SAMPLE1_DIR -maxdepth 1 -name "*R1*.fastq.gz" | sort
 echo "Saving concatenated fastq file at: $OUTDIR/${R1_FASTQ}"
-CMD="qsub -V -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -q sandbox.q -N concatenateR1Fastq ${SCRIPT_DIR}/concatenate_fastq.sh -d ${SAMPLE1_DIR} -o ${OUTDIR} -r ${R1_FASTQ}"
+CMD="qsub -V -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -q sandbox.q -N concatenateR1Fastq ${SCRIPT_DIR}/concatenate_fastq.sh -d ${SAMPLE1_DIR} -o ${OUTDIR} -r R1 -f ${R1_FASTQ}"
 echo "Executing command: ${CMD}"
 ${CMD}
 
@@ -73,7 +73,7 @@ ${CMD}
 echo "Processing R2 fastqs in directory: ${SAMPLE1_DIR}"
 find $SAMPLE1_DIR -maxdepth 1 -name "*R2*.fastq.gz" | sort
 echo "Saving concatenated fastq file at: $OUTDIR/${R2_FASTQ}"
-CMD="qsub -V -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -q sandbox.q -N concatenateR2Fastq ${SCRIPT_DIR}/concatenate_fastq.sh -d ${SAMPLE1_DIR} -o ${OUTDIR} -r ${R2_FASTQ}"
+CMD="qsub -V -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -q sandbox.q -N concatenateR2Fastq ${SCRIPT_DIR}/concatenate_fastq.sh -d ${SAMPLE1_DIR} -o ${OUTDIR} -r R2 -f ${R2_FASTQ}"
 echo "Executing command: ${CMD}"
 ${CMD}
 
