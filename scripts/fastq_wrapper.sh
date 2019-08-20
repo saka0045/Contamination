@@ -4,13 +4,13 @@
 #Global Variables
 ##################################################
 
-SAMPLE1_DIR=""
+INPUT_DIR=""
 SCRIPT_DIR=""
 OUTDIR=""
 LOG_DIR=""
-SAMPLE1_NAME=""
-R1_RESULT1_FILE=""
-R2_RESULT1_FILE=""
+SAMPLE_NAME=""
+R1_RESULT_FILE=""
+R2_RESULT_FILE=""
 R1_FASTQ=""
 CMD=""
 
@@ -25,7 +25,7 @@ different reads
 
 OPTIONS:
     -h  [optional] help, show this message
-    -a  [required] input directory for sample 1
+    -i  [required] input directory for sample
     -o  [required] output directory
 
 EOF
@@ -35,17 +35,17 @@ EOF
 #BEGIN PROCESSING
 ##################################################
 
-while getopts "ha:o:" OPTION
+while getopts "hi:o:" OPTION
 do
     case $OPTION in
 		h) usage ; exit ;;
-		a) SAMPLE1_DIR=${OPTARG} ;;
+		i) INPUT_DIR=${OPTARG} ;;
 		o) OUTDIR=${OPTARG} ;;
     esac
 done
 
-if [[ -z $SAMPLE1_DIR ]]; then
-    echo -e "ERROR: -a option is required\n"
+if [[ -z $INPUT_DIR ]]; then
+    echo -e "ERROR: -i option is required\n"
     exit 1
 fi
 
@@ -57,53 +57,68 @@ fi
 # Directory of script
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Make directory for log files
-mkdir ${OUTDIR}/logs
-LOG_DIR=${OUTDIR}/logs
-echo "Making logs directory at: ${LOG_DIR}"
-
 #Get sample1 name
-SAMPLE1_NAME=${SAMPLE1_DIR##*/}
-R1_FASTQ=${SAMPLE1_NAME}_combined_R1.temp.fastq
-R2_FASTQ=${SAMPLE1_NAME}_combined_R2.temp.fastq
-echo "Sample name: $SAMPLE1_NAME"
+SAMPLE_NAME=${INPUT_DIR##*/}
+R1_FASTQ=${SAMPLE_NAME}_combined_R1.temp.fastq
+R2_FASTQ=${SAMPLE_NAME}_combined_R2.temp.fastq
+echo "Sample name: $SAMPLE_NAME"
+
+# Make directory under ${OUTDIR} with ${SAMPLE_NAME} if it doesn't exist
+OUTDIR=${OUTDIR}/${SAMPLE_NAME}
+if [[ -d ${OUTDIR} ]]; then
+    echo "Output directory ${OUTDIR} already exists!"
+    echo "Aborting script"
+    exit 1
+else
+    mkdir ${OUTDIR}
+    echo "Creating output directory ${OUTDIR}"
+fi
+
+# Make directory for log files if it doesn't exist already
+LOG_DIR=${OUTDIR}/logs
+if [[ ! -d "${LOG_DIR}" ]]; then
+    mkdir ${LOG_DIR}
+    echo "Making logs directory at: ${LOG_DIR}"
+else
+    echo "Log directory ${LOG_DIR} already exists, skipping creation of log directory"
+fi
 
 # Process R1 fastqs
-echo "Processing R1 fastqs in directory: $SAMPLE1_DIR"
-find $SAMPLE1_DIR -maxdepth 1 -name "*R1*.fastq.gz" | sort
+echo "Processing R1 fastqs in directory: $INPUT_DIR"
+find $INPUT_DIR -maxdepth 1 -name "*R1*.fastq.gz" | sort
 echo "Saving concatenated fastq file at: $OUTDIR/${R1_FASTQ}"
-CMD="qsub -V -m abe -M sakai.yuta@mayo.edu -wd ${LOG_DIR} -q sandbox.q -N concatenateR1Fastq ${SCRIPT_DIR}/concatenate_fastq.sh -d ${SAMPLE1_DIR} -o ${OUTDIR} -r R1 -f ${R1_FASTQ}"
+CMD="qsub -V -m abe -M sakai.yuta@mayo.edu -wd ${LOG_DIR} -q sandbox.q -N concatenateR1Fastq ${SCRIPT_DIR}/concatenate_fastq.sh -d ${INPUT_DIR} -o ${OUTDIR} -r R1 -f ${R1_FASTQ}"
 echo "Executing command: ${CMD}"
 ${CMD}
 
 # Process R2 fastqs
-echo "Processing R2 fastqs in directory: ${SAMPLE1_DIR}"
-find $SAMPLE1_DIR -maxdepth 1 -name "*R2*.fastq.gz" | sort
+echo "Processing R2 fastqs in directory: ${INPUT_DIR}"
+find $INPUT_DIR -maxdepth 1 -name "*R2*.fastq.gz" | sort
 echo "Saving concatenated fastq file at: $OUTDIR/${R2_FASTQ}"
-CMD="qsub -V -m abe -M sakai.yuta@mayo.edu -wd ${LOG_DIR} -q sandbox.q -N concatenateR2Fastq ${SCRIPT_DIR}/concatenate_fastq.sh -d ${SAMPLE1_DIR} -o ${OUTDIR} -r R2 -f ${R2_FASTQ}"
+CMD="qsub -V -m abe -M sakai.yuta@mayo.edu -wd ${LOG_DIR} -q sandbox.q -N concatenateR2Fastq ${SCRIPT_DIR}/concatenate_fastq.sh -d ${INPUT_DIR} -o ${OUTDIR} -r R2 -f ${R2_FASTQ}"
 echo "Executing command: ${CMD}"
 ${CMD}
 
 # Make result file
-R1_RESULT1_FILE=${OUTDIR}/${SAMPLE1_NAME}_combined_R1_fastq_results.txt
-touch ${R1_RESULT1_FILE}
-echo "Line count for ${R1_FASTQ}:" >> ${R1_RESULT1_FILE}
+R1_RESULT_FILE=${OUTDIR}/${SAMPLE_NAME}_combined_R1_fastq_results.txt
+touch ${R1_RESULT_FILE}
+echo "Line count for ${R1_FASTQ}:" >> ${R1_RESULT_FILE}
 
 # qsub and count the lines in the R1 fastq file
 echo "Counting lines in ${R1_FASTQ}"
 # wait for concatenateFastq to finish before qsubbing this
-CMD="qsub -hold_jid concatenateR1Fastq -V -m abe -M sakai.yuta@mayo.edu -wd ${LOG_DIR} -q sandbox.q -N countR1FastqLine ${SCRIPT_DIR}/count_fastq_lines.sh -o ${OUTDIR} -f ${R1_FASTQ} -r ${R1_RESULT1_FILE}"
+CMD="qsub -hold_jid concatenateR1Fastq -V -m abe -M sakai.yuta@mayo.edu -wd ${LOG_DIR} -q sandbox.q -N countR1FastqLine ${SCRIPT_DIR}/count_fastq_lines.sh -o ${OUTDIR} -f ${R1_FASTQ} -r ${R1_RESULT_FILE}"
 echo "Executing command: ${CMD}"
 ${CMD}
 
 # Entry for R2
-R2_RESULT1_FILE=${OUTDIR}/${SAMPLE1_NAME}_combined_R2_fastq_results.txt
-touch ${R2_RESULT1_FILE}
-echo "Line count for ${R2_FASTQ}:" >> ${R2_RESULT1_FILE}
+R2_RESULT_FILE=${OUTDIR}/${SAMPLE_NAME}_combined_R2_fastq_results.txt
+touch ${R2_RESULT_FILE}
+echo "Line count for ${R2_FASTQ}:" >> ${R2_RESULT_FILE}
 
 # qsub and count the lines in the R2 fastq file
 echo "Counting lines in ${R2_FASTQ}"
 # wait for concatenateFastq to finish before qsubbing this
-CMD="qsub -hold_jid concatenateR2Fastq -V -m abe -M sakai.yuta@mayo.edu -wd ${LOG_DIR} -q sandbox.q -N countR2FastqLine ${SCRIPT_DIR}/count_fastq_lines.sh -o ${OUTDIR} -f ${R2_FASTQ} -r ${R2_RESULT1_FILE}"
+CMD="qsub -hold_jid concatenateR2Fastq -V -m abe -M sakai.yuta@mayo.edu -wd ${LOG_DIR} -q sandbox.q -N countR2FastqLine ${SCRIPT_DIR}/count_fastq_lines.sh -o ${OUTDIR} -f ${R2_FASTQ} -r ${R2_RESULT_FILE}"
 echo "Executing command: ${CMD}"
 ${CMD}
