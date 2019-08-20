@@ -44,6 +44,4 @@ do
     esac
 done
 
-CMD="/usr/local/biotools/seqtk/1.3-r106/seqtk sample -s ${SEED} ${INPUT_FASTQ} ${READS} > ${OUT_FASTQ}"
-echo "Executing command ${CMD}"
-${CMD}
+/usr/local/biotools/seqtk/1.3-r106/seqtk sample -s ${SEED} ${INPUT_FASTQ} ${READS} > ${OUT_FASTQ}
