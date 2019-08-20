@@ -8,4 +8,4 @@ scripts/__pycache__/
 Hereditary/target.bed
 Hereditary/probes.bed
 Publications/*
-Large_Cancer/fastqs/*
+Large_Cancer/fastq/*
