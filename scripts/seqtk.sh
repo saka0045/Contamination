@@ -22,7 +22,7 @@ different reads
 OPTIONS:
     -h  [optional] help, show this message
     -i  [required] full path to input fastq file
-    -f  [required] full path to output fastq file
+    -o  [required] full path to output fastq file
     -s  [required] random seed number
     -r  [required] number of reads to subset to
 
@@ -33,12 +33,12 @@ EOF
 #BEGIN PROCESSING
 ##################################################
 
-while getopts "hi:f:s:r:" OPTION
+while getopts "hi:o:s:r:" OPTION
 do
     case $OPTION in
 		h) usage ; exit ;;
 		i) INPUT_FASTQ=${OPTARG} ;;
-		f) OUT_FASTQ=${OPTARG} ;;
+		o) OUT_FASTQ=${OPTARG} ;;
 		s) SEED=${OPTARG} ;;
 		r) READS=${OPTARG} ;;
     esac
