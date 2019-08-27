@@ -9,7 +9,6 @@ declare -A FQ_ARR2
 SAMPLE1_DIR=""
 SAMPLE2_DIR=""
 OUTDIR=""
-QSUB="qsub -V -m abe -M sakai.yuta@mayo.edu -q sandbox.q -wd ${OUTDIR}"
 CMD=""
 
 ##################################################
@@ -61,6 +60,9 @@ fi
 
 # Directory of script
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+#QSUB Command
+QSUB="qsub -V -m abe -M sakai.yuta@mayo.edu -q sandbox.q -wd ${OUTDIR}"
 
 # Count lines in fastq file for SAMPLE1_DIR
 for FQ_FILE in ${SAMPLE1_DIR}/*R1*.fastq.gz; do
