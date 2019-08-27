@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
 
 ##################################################
-#DEFAULT VALUES
+#GLOBAL VARIABLES
 ##################################################
 
 declare -A FQ_ARR1
 declare -A FQ_ARR2
+SAMPLE1_DIR=""
+SAMPLE2_DIR=""
+OUTDIR=""
+QSUB="qsub -V -m abe -M sakai.yuta@mayo.edu -q sandbox.q -wd ${OUTDIR}"
+CMD=""
 
 ##################################################
 #FUNCTIONS
@@ -59,10 +64,11 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Count lines in fastq file for SAMPLE1_DIR
 for FQ_FILE in ${SAMPLE1_DIR}/*R1*.fastq.gz; do
-    FQ_ARR1[${FQ_FILE##*/}]=$(qsub -V -m abe -M sakai.yuta@mayo.edu -q sandbox.q -N countFastq1 -wd ${OUTDIR} \
-    ${SCRIPT_DIR}/countFastqFile.sh -f ${FQ_FILE})
+    CMD="${QSUB} -N countFastq1 ${SCRIPT_DIR}/countFastqFile.sh -f ${FQ_FILE}"
+    echo "${CMD}"
+    FQ_ARR1[${FQ_FILE##*/}]=$(${CMD})
 done
 
-for KEY in ${!FQ_ARR1[@]}; do
-    echo ${KEY} ${FQ_ARR1[${KEY}]}
-done
+CMD="${QSUB} -N arrayTest ${SCRIPT_DIR}/arrayTest.sh -a ${FQ_ARR1} -r ${OUTDIR}/testArray.txt"
+echo "${CMD}"
+${CMD}
