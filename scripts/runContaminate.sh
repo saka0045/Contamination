@@ -114,7 +114,7 @@ COUNT_FASTQ_JOBS+=("${JOB_ID}")
 echo "COUNT_FASTQ_JOBS+=${JOB_ID}"
 
 for JOB_ID in ${COUNT_FASTQ_JOBS:-}; do
-    waitForJob ${JOB_ID} 10800 10
+    waitForJob ${JOB_ID} 86400 60
 done
 
 echo "script is done running!"
