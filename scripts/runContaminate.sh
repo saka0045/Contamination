@@ -72,7 +72,7 @@ done
 
 TOTAL_READS_SAMPLE1_R1=0
 for KEY in ${!FQ_ARR1[@]}; do
-    COUNT=${FQ_ARR1[${KEY}]}
+    COUNT=$(${FQ_ARR1[${KEY}]})
     echo ${KEY} ${COUNT} >> ${RESULT_FILE}
     TOTAL_READS_SAMPLE1_R1=$(${TOTAL_READS_SAMPLE1_R1}+${COUNT})
 done
