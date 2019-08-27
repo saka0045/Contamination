@@ -37,6 +37,8 @@ do
     esac
 done
 
+touch ${RESULT_FILE}
+
 for KEY in ${!FQ_ARR1[@]}; do
     echo ${KEY} ${FQ_ARR1[${KEY}]} >> ${RESULT_FILE}
 done
