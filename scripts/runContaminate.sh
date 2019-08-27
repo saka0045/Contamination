@@ -101,9 +101,9 @@ RESULT_FILE=${OUTDIR}/arrayResults.txt
 #Process first sample R1 fastq files
 CMD="${QSUB} ${QSUB_ARGS} -N countFastq ${SCRIPT_DIR}/countFastqFile.sh -s ${SAMPLE1_DIR} -r R1 -f ${RESULT_FILE}"
 echo "CMD=${CMD}"
-${CMD}
+#${CMD}
 JOB_ID=$(${CMD})
 
-waitForJob ${JOB_ID} 10800 60
+waitForJob ${JOB_ID} 10800 5
 
 echo "script is done running!"
