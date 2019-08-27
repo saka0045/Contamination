@@ -70,6 +70,11 @@ for FQ_FILE in ${SAMPLE1_DIR}/*R1*.fastq.gz; do
     FQ_ARR1[${FQ_FILE##*/}]=$(/bin/zcat ${FQ_FILE} | /usr/bin/wc -l)
 done
 
+TOTAL_READS_SAMPLE1_R1=0
 for KEY in ${!FQ_ARR1[@]}; do
-    echo ${KEY} ${FQ_ARR1[${KEY}]} >> ${RESULT_FILE}
+    COUNT=${FQ_ARR1[${KEY}]}
+    echo ${KEY} ${COUNT} >> ${RESULT_FILE}
+    ${TOTAL_READS_SAMPLE1_R1}=$(${TOTAL_READS_SAMPLE1_R1}+${COUNT})
 done
+
+echo "Total Reads in Sample R1 is: ${TOTAL_READS_SAMPLE1_R1}" >> ${RESULT_FILE}
