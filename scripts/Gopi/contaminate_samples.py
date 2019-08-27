@@ -143,7 +143,7 @@ class MixSample():
 
         # Silencing processing of fastqs
         # self.process_fastq()
-    """
+
     def process_fastq(self):
 
         r1_fastq, sample_name = self.get_out_fastq_name('R1.fq')
@@ -162,11 +162,11 @@ class MixSample():
         print(f'\n\nCleanup_cmd:\n {s3_qsub}, out-{out3}, err-{err3}')
 
         fq_job_id = out3.split(' ')[2].strip()
-        sentieon_qsub =  f'qsub -V -b y -v SENTIEON_LICENSE=dlmpcim03.mayo.edu:8990 -q sandbox.q -N mgc_sentieon-{self.percent} -hold_jid {fq_job_id} -l h_vmem=150G -l h_stack=15M -m ea -e {self.logs} -o {self.logs} {sentieon_cmd}'
+        sentieon_qsub = f'qsub -V -b y -v SENTIEON_LICENSE=dlmpcim03.mayo.edu:8990 -q sandbox.q -N mgc_sentieon-{self.percent} -hold_jid {fq_job_id} -l h_vmem=150G -l h_stack=15M -m ea -e {self.logs} -o {self.logs} {sentieon_cmd}'
         out4, err4 = self.subprocess_cmd(sentieon_qsub)
         print(f'\nsentieon_cmd:\n {sentieon_qsub}, out-{out4}, err-{err4}')
         sentieon_job_id = out4.split(' ')[2].strip()
-    """
+
 
     def get_read_count(self, sample_fq):
         cmd = "zcat " + sample_fq + " | wc -l"
