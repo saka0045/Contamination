@@ -61,16 +61,15 @@ fi
 # Directory of script
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-#QSUB Command
-QSUB="qsub -V -m abe -M sakai.yuta@mayo.edu -q sandbox.q -wd ${OUTDIR}"
+# Result file
+RESULT_FILE=${OUTDIR}/arrayResults.txt
 
 # Count lines in fastq file for SAMPLE1_DIR
 for FQ_FILE in ${SAMPLE1_DIR}/*R1*.fastq.gz; do
-    CMD="${QSUB} -N countFastq1 ${SCRIPT_DIR}/countFastqFile.sh -f ${FQ_FILE}"
-    echo "${CMD}"
-    FQ_ARR1[${FQ_FILE##*/}]=$(${CMD})
+    echo "Counting lines in ${FQ_FILE}" >> ${RESULT_FILE}
+    FQ_ARR1[${FQ_FILE##*/}]=$(/bin/zcat ${FQ_FILE} | /usr/bin/wc -l)
 done
 
-CMD="${QSUB} -N arrayTest ${SCRIPT_DIR}/arrayTest.sh -a ${FQ_ARR1[@]} -r ${OUTDIR}/testArray.txt"
-echo "${CMD}"
-${CMD}
+for KEY in ${!FQ_ARR1[@]}; do
+    echo ${KEY} ${FQ_ARR1[${KEY}]} >> ${RESULT_FILE}
+done
