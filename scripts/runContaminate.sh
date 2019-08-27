@@ -90,7 +90,7 @@ if [[ -z ${OUTDIR} ]]; then
 fi
 
 # Define variables
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR="/dlmp/sandbox/cgslIS/Yuta/Contamination/scripts"
 QDIR="/usr/local/biotools/oge/ge2011.11/bin/linux-x64"
 QSUB="${QDIR}/qsub"
 QSTAT="${QDIR}/qstat"
