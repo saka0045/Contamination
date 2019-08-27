@@ -71,6 +71,6 @@ for FQ_FILE in ${SAMPLE1_DIR}/*R1*.fastq.gz; do
     FQ_ARR1[${FQ_FILE##*/}]=$(${CMD})
 done
 
-CMD="${QSUB} -N arrayTest ${SCRIPT_DIR}/arrayTest.sh -a ${FQ_ARR1} -r ${OUTDIR}/testArray.txt"
+CMD="${QSUB} -N arrayTest ${SCRIPT_DIR}/arrayTest.sh -a ${FQ_ARR1[@]} -r ${OUTDIR}/testArray.txt"
 echo "${CMD}"
 ${CMD}
