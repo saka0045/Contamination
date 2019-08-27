@@ -59,7 +59,8 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Count lines in fastq file for SAMPLE1_DIR
 for FQ_FILE in ${SAMPLE1_DIR}/*R1*.fastq.gz; do
-    FQ_ARR1[${FQ_FILE##*/}]=$(${SCRIPT_DIR}/countFastqFile.sh -f ${FQ_FILE})
+    FQ_ARR1[${FQ_FILE##*/}]=$(qsub -V -m abe -M sakai.yuta@mayo.edu -q sandbox.q -N countFastq1 -wd ${OUTDIR} \
+    ${SCRIPT_DIR}/countFastqFile.sh -f ${FQ_FILE})
 done
 
 for KEY in ${!FQ_ARR1[@]}; do
