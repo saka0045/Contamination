@@ -4,7 +4,6 @@
 #GLOBAL VARIABLES
 ##################################################
 
-declare -A FQ_ARR1
 declare -A FQ_ARR2
 SAMPLE1_DIR=""
 SAMPLE2_DIR=""
@@ -27,6 +26,38 @@ OPTIONS:
     -o  [required] output directory
 
 EOF
+}
+
+function waitForJob () {
+    local WAIT_TIME=0
+    local MAX_WAIT=${2:-10800}
+    local SLEEP_TIME=${3:-120}
+
+    local JOB_ID="${1}"
+    local JOB_RUNNING=$(${QSTAT} -u '*' | gawk -F " " -v JID="${JOB_ID}" '$1==JID{print $1}')
+
+    echo "Waiting for grid job ${JOB_ID} to complete. MAX_WAIT: ${MAX_WAIT}"
+
+    while [[ ${JOB_RUNNING} != "" ]]
+    do
+        if [[ ${WAIT_TIME} -gt ${MAX_WAIT} ]]; then
+            echo "Job processing exceeded timeout value. Job ID: ${JOB_ID}" ${ERR_GENERAL}
+            exit ${ERR_GENERAL}
+        fi
+
+        QSTS=$(${QSTAT} -u '*' | grep ${JOB_ID} || true)
+        QSTS=$(echo ${QSTS} | tr -s ' ' | cut -f5 -d " ")
+        if [[ ${QSTS} == "Eqw" ]]; then
+            echo "QSTAT indicates job ${JOB_ID} failed." ${ERR_GENERAL}
+            exit ${ERR_GENERAL}
+        fi
+
+        echo "Sleeping for ${SLEEP_TIME} seconds"
+        sleep ${SLEEP_TIME}
+        WAIT_TIME=$(($WAIT_TIME + $SLEEP_TIME))
+
+        JOB_RUNNING=$(${QSTAT} -u '*' | gawk -F " " -v JID="${JOB_ID}" '$1==JID{print $1}')
+    done
 }
 
 ##################################################
@@ -58,23 +89,21 @@ if [[ -z ${OUTDIR} ]]; then
     exit 1
 fi
 
-# Directory of script
+# Define variables
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-# Result file
+QDIR="/usr/local/biotools/oge/ge2011.11/bin/linux-x64"
+QSUB="${QDIR}/qsub"
+QSTAT="${QDIR}/qstat"
+QSUB_ARGS="-terse -V -q sandbox.q -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -j y"
+ERR_GENERAL=1
 RESULT_FILE=${OUTDIR}/arrayResults.txt
 
-# Count lines in fastq file for SAMPLE1_DIR
-for FQ_FILE in ${SAMPLE1_DIR}/*R1*.fastq.gz; do
-    echo "Counting lines in ${FQ_FILE}" >> ${RESULT_FILE}
-    FQ_ARR1[${FQ_FILE##*/}]=$(/bin/zcat ${FQ_FILE} | /usr/bin/wc -l)
-done
+#Process first sample R1 fastq files
+CMD="${QSUB} ${QSUB_ARGS} -N countFastq ${SCRIPT_DIR}/countFastqFile.sh -s ${SAMPLE1_DIR} -r R1 -f ${RESULT_FILE}"
+echo "CMD=${CMD}"
+${CMD}
+JOB_ID=$(${CMD})
 
-TOTAL_READS_SAMPLE1_R1=0
-for KEY in ${!FQ_ARR1[@]}; do
-    COUNT=${FQ_ARR1[${KEY}]}
-    echo ${KEY} ${COUNT} >> ${RESULT_FILE}
-    TOTAL_READS_SAMPLE1_R1=$((${TOTAL_READS_SAMPLE1_R1}+${COUNT}))
-done
+waitForJob ${JOB_ID} 10800 60
 
-echo "Total Reads in Sample R1 is: ${TOTAL_READS_SAMPLE1_R1}" >> ${RESULT_FILE}
+echo "script is done running!"
