@@ -97,13 +97,24 @@ QSTAT="${QDIR}/qstat"
 QSUB_ARGS="-terse -V -q sandbox.q -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -j y"
 ERR_GENERAL=1
 RESULT_FILE=${OUTDIR}/arrayResults.txt
+COUNT_FASTQ_JOBS=()
 
 #Process first sample R1 fastq files
 CMD="${QSUB} ${QSUB_ARGS} -N countFastq ${SCRIPT_DIR}/countFastqFile.sh -s ${SAMPLE1_DIR} -r R1 -f ${RESULT_FILE}"
 echo "CMD=${CMD}"
-#${CMD}
 JOB_ID=$(${CMD})
+COUNT_FASTQ_JOBS+=("${JOB_ID}")
+echo "COUNT_FASTQ_JOBS+=${JOB_ID}"
 
-waitForJob ${JOB_ID} 10800 5
+#Process first sample R2 fastq files
+CMD="${QSUB} ${QSUB_ARGS} -N countFastq ${SCRIPT_DIR}/countFastqFile.sh -s ${SAMPLE1_DIR} -r R2 -f ${RESULT_FILE}"
+echo "CMD=${CMD}"
+JOB_ID=$(${CMD})
+COUNT_FASTQ_JOBS+=("${JOB_ID}")
+echo "COUNT_FASTQ_JOBS+=${JOB_ID}"
+
+for JOB_ID in ${COUNT_FASTQ_JOBS:-}; do
+    waitForJob ${JOB_ID} 10800 10
+done
 
 echo "script is done running!"
