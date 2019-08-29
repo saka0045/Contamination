@@ -89,25 +89,51 @@ if [[ -z ${OUTDIR} ]]; then
     exit 1
 fi
 
+# Make directory for log files if it doesn't exist already
+LOG_DIR=${OUTDIR}/logs
+if [[ ! -d "${LOG_DIR}" ]]; then
+    mkdir ${LOG_DIR}
+    echo "Making logs directory at: ${LOG_DIR}"
+else
+    echo "Log directory ${LOG_DIR} already exists, skipping creation of log directory"
+fi
+
 # Define variables
 SCRIPT_DIR="/dlmp/sandbox/cgslIS/Yuta/Contamination/scripts"
 QDIR="/usr/local/biotools/oge/ge2011.11/bin/linux-x64"
 QSUB="${QDIR}/qsub"
 QSTAT="${QDIR}/qstat"
-QSUB_ARGS="-terse -V -q sandbox.q -m abe -M sakai.yuta@mayo.edu -wd ${OUTDIR} -j y"
+QSUB_ARGS="-terse -V -q sandbox.q -m abe -M sakai.yuta@mayo.edu -o ${LOG_DIR} -j y"
 ERR_GENERAL=1
-RESULT_FILE=${OUTDIR}/arrayResults.txt
+SAMPLE1_NAME=${SAMPLE1_DIR##*/}
+SAMPLE2_NAME=${SAMPLE2_DIR##*/}
+RESULT1_FILE=${OUTDIR}/${SAMPLE1_NAME}.results.txt
+RESULT2_FILE=${OUTDIR}/${SAMPLE2_NAME}.results.txt
 COUNT_FASTQ_JOBS=()
 
 #Process first sample R1 fastq files
-CMD="${QSUB} ${QSUB_ARGS} -N countFastq ${SCRIPT_DIR}/countFastqFile.sh -s ${SAMPLE1_DIR} -r R1 -f ${RESULT_FILE}"
+CMD="${QSUB} ${QSUB_ARGS} -N countFastq ${SCRIPT_DIR}/countFastqFile.sh -s ${SAMPLE1_DIR} -r R1 -f ${RESULT1_FILE}"
 echo "CMD=${CMD}"
 JOB_ID=$(${CMD})
 COUNT_FASTQ_JOBS+=("${JOB_ID}")
 echo "COUNT_FASTQ_JOBS+=${JOB_ID}"
 
 #Process first sample R2 fastq files
-CMD="${QSUB} ${QSUB_ARGS} -N countFastq ${SCRIPT_DIR}/countFastqFile.sh -s ${SAMPLE1_DIR} -r R2 -f ${RESULT_FILE}"
+CMD="${QSUB} ${QSUB_ARGS} -N countFastq ${SCRIPT_DIR}/countFastqFile.sh -s ${SAMPLE1_DIR} -r R2 -f ${RESULT1_FILE}"
+echo "CMD=${CMD}"
+JOB_ID=$(${CMD})
+COUNT_FASTQ_JOBS+=("${JOB_ID}")
+echo "COUNT_FASTQ_JOBS+=${JOB_ID}"
+
+#Process second sample R1 fastq files
+CMD="${QSUB} ${QSUB_ARGS} -N countFastq ${SCRIPT_DIR}/countFastqFile.sh -s ${SAMPLE2_DIR} -r R1 -f ${RESULT2_FILE}"
+echo "CMD=${CMD}"
+JOB_ID=$(${CMD})
+COUNT_FASTQ_JOBS+=("${JOB_ID}")
+echo "COUNT_FASTQ_JOBS+=${JOB_ID}"
+
+#Process second sample R2 fastq files
+CMD="${QSUB} ${QSUB_ARGS} -N countFastq ${SCRIPT_DIR}/countFastqFile.sh -s ${SAMPLE2_DIR} -r R2 -f ${RESULT2_FILE}"
 echo "CMD=${CMD}"
 JOB_ID=$(${CMD})
 COUNT_FASTQ_JOBS+=("${JOB_ID}")

@@ -43,7 +43,7 @@ done
 
 # Count lines in fastq file for SAMPLE1_DIR
 for FQ_FILE in ${SAMPLE_DIR}/*${READ}*.fastq.gz; do
-    echo "Counting lines in ${FQ_FILE}" >> ${RESULT_FILE}
+    echo "Counting lines in ${FQ_FILE}"
     FQ_ARR[${FQ_FILE##*/}]=$(/bin/zcat ${FQ_FILE} | /usr/bin/wc -l)
 done
 
