@@ -52,7 +52,7 @@ function waitForJob () {
             exit ${ERR_GENERAL}
         fi
 
-        echo "Sleeping for ${SLEEP_TIME} seconds"
+        # echo "Sleeping for ${SLEEP_TIME} seconds"
         sleep ${SLEEP_TIME}
         WAIT_TIME=$(($WAIT_TIME + $SLEEP_TIME))
 
