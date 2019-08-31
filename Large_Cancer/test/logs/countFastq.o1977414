@@ -1,4 +1,0 @@
-Counting lines in /dlmp/sandbox/runs/NGS87-MSTR/NGS87-MSTR_DNA05132019_NGS87_HKLCLDMXX/samples/006-D01S/006-D01S_L001_R1_001.fastq.gz
-Counting lines in /dlmp/sandbox/runs/NGS87-MSTR/NGS87-MSTR_DNA05132019_NGS87_HKLCLDMXX/samples/006-D01S/006-D01S_L002_R1_001.fastq.gz
-/usr/local/biotools/oge/ge2011.11/default/spool/dlmpcim69/job_scripts/1977414: line 52: 894831840: command not found
-/usr/local/biotools/oge/ge2011.11/default/spool/dlmpcim69/job_scripts/1977414: line 54: 0+: syntax error: operand expected (error token is "+")
