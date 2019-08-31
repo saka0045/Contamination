@@ -49,7 +49,9 @@ done
 
 TOTAL_READS_SAMPLE=0
 for KEY in ${!FQ_ARR[@]}; do
+    echo "lines in ${KEY} is ${FQ_ARR[${KEY}]}"
     COUNT=$((${FQ_ARR[${KEY}]} / 4 ))
+    echo "number of reads in ${KEY} is ${COUNT}"
     echo "${KEY}=${COUNT}" >> ${RESULT_FILE}
     TOTAL_READS_SAMPLE=$((${TOTAL_READS_SAMPLE}+${COUNT}))
 done
