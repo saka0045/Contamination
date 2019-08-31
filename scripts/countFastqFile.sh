@@ -41,10 +41,14 @@ do
     esac
 done
 
+SAMPLE_NAME=${SAMPLE_DIR##*/}
+
 # Count lines in fastq file for SAMPLE1_DIR
 for FQ_FILE in ${SAMPLE_DIR}/*${READ}*.fastq.gz; do
     echo "Counting lines in ${FQ_FILE}"
-    FQ_ARR[${FQ_FILE##*/}]=$(/bin/zcat ${FQ_FILE} | /usr/bin/wc -l)
+    FQ_FILE_NAME=${FQ_FILE##*/}
+    FQ_LANE_READ=${FQ_FILE_NAME%%.*}
+    FQ_ARR[${FQ_LANE_READ}]=$(/bin/zcat ${FQ_FILE} | /usr/bin/wc -l)
 done
 
 TOTAL_READS_SAMPLE=0
@@ -56,4 +60,4 @@ for KEY in ${!FQ_ARR[@]}; do
     TOTAL_READS_SAMPLE=$((${TOTAL_READS_SAMPLE}+${COUNT}))
 done
 
-echo "TOTAL_READS_SAMPLE_${READ}=${TOTAL_READS_SAMPLE}" >> ${RESULT_FILE}
+echo "TOTAL_READS_${SAMPLE_NAME}_${READ}=${TOTAL_READS_SAMPLE}" >> ${RESULT_FILE}
