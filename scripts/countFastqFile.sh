@@ -15,8 +15,8 @@ RESULT_FILE=""
 
 function usage(){
 cat << EOF
-concatenates fastq files from all lanes, but separate out by
-different reads
+Count the lines in the fastq file and divide by 4 to get the read count
+Adds the total reads in all lanes for the read orientation (R1 or R2)
 
 OPTIONS:
     -h  [optional] help, show this message
