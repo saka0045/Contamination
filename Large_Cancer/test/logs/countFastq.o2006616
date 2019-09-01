@@ -1,6 +1,6 @@
 Counting lines in /dlmp/sandbox/runs/NGS87-MSTR/NGS87-MSTR_DNA05132019_NGS87_HKLCLDMXX/samples/009-D01S/009-D01S_L001_R2_001.fastq.gz
 Counting lines in /dlmp/sandbox/runs/NGS87-MSTR/NGS87-MSTR_DNA05132019_NGS87_HKLCLDMXX/samples/009-D01S/009-D01S_L002_R2_001.fastq.gz
-lines in 009-D01S_L001_R2_001.fastq.gz is 822958360
-number of reads in 009-D01S_L001_R2_001.fastq.gz is 205739590
-lines in 009-D01S_L002_R2_001.fastq.gz is 816360932
-number of reads in 009-D01S_L002_R2_001.fastq.gz is 204090233
+lines in 009-D01S_L002_R2_001 is 816360932
+number of reads in 009-D01S_L002_R2_001 is 204090233
+lines in 009-D01S_L001_R2_001 is 822958360
+number of reads in 009-D01S_L001_R2_001 is 205739590

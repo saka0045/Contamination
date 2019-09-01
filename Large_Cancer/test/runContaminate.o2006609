@@ -1,11 +1,11 @@
 Making logs directory at: /dlmp/sandbox/cgslIS/Yuta/Contamination/Large_Cancer/test/logs
 CMD=/usr/local/biotools/oge/ge2011.11/bin/linux-x64/qsub -terse -V -q sandbox.q -m abe -M sakai.yuta@mayo.edu -o /dlmp/sandbox/cgslIS/Yuta/Contamination/Large_Cancer/test/logs -j y -N countFastq /dlmp/sandbox/cgslIS/Yuta/Contamination/scripts/countFastqFile.sh -s /dlmp/sandbox/runs/NGS87-MSTR/NGS87-MSTR_DNA05132019_NGS87_HKLCLDMXX/samples/006-D01S -r R1 -f /dlmp/sandbox/cgslIS/Yuta/Contamination/Large_Cancer/test/006-D01S.results.txt
-COUNT_FASTQ_JOBS+=2006273
+COUNT_FASTQ_JOBS+=2006613
 CMD=/usr/local/biotools/oge/ge2011.11/bin/linux-x64/qsub -terse -V -q sandbox.q -m abe -M sakai.yuta@mayo.edu -o /dlmp/sandbox/cgslIS/Yuta/Contamination/Large_Cancer/test/logs -j y -N countFastq /dlmp/sandbox/cgslIS/Yuta/Contamination/scripts/countFastqFile.sh -s /dlmp/sandbox/runs/NGS87-MSTR/NGS87-MSTR_DNA05132019_NGS87_HKLCLDMXX/samples/006-D01S -r R2 -f /dlmp/sandbox/cgslIS/Yuta/Contamination/Large_Cancer/test/006-D01S.results.txt
-COUNT_FASTQ_JOBS+=2006274
+COUNT_FASTQ_JOBS+=2006614
 CMD=/usr/local/biotools/oge/ge2011.11/bin/linux-x64/qsub -terse -V -q sandbox.q -m abe -M sakai.yuta@mayo.edu -o /dlmp/sandbox/cgslIS/Yuta/Contamination/Large_Cancer/test/logs -j y -N countFastq /dlmp/sandbox/cgslIS/Yuta/Contamination/scripts/countFastqFile.sh -s /dlmp/sandbox/runs/NGS87-MSTR/NGS87-MSTR_DNA05132019_NGS87_HKLCLDMXX/samples/009-D01S -r R1 -f /dlmp/sandbox/cgslIS/Yuta/Contamination/Large_Cancer/test/009-D01S.results.txt
-COUNT_FASTQ_JOBS+=2006275
+COUNT_FASTQ_JOBS+=2006615
 CMD=/usr/local/biotools/oge/ge2011.11/bin/linux-x64/qsub -terse -V -q sandbox.q -m abe -M sakai.yuta@mayo.edu -o /dlmp/sandbox/cgslIS/Yuta/Contamination/Large_Cancer/test/logs -j y -N countFastq /dlmp/sandbox/cgslIS/Yuta/Contamination/scripts/countFastqFile.sh -s /dlmp/sandbox/runs/NGS87-MSTR/NGS87-MSTR_DNA05132019_NGS87_HKLCLDMXX/samples/009-D01S -r R2 -f /dlmp/sandbox/cgslIS/Yuta/Contamination/Large_Cancer/test/009-D01S.results.txt
-COUNT_FASTQ_JOBS+=2006276
-Waiting for grid job 2006273 to complete. MAX_WAIT: 86400
+COUNT_FASTQ_JOBS+=2006616
+Waiting for grid job 2006613 to complete. MAX_WAIT: 86400
 script is done running!
