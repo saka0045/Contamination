@@ -124,7 +124,7 @@ done
 
 TOTAL_READS_SAMPLE1=0
 for KEY in ${!FQ_ARR1[@]}; do
-    COUNT=$(${FQ_ARR1[${KEY}]})
+    COUNT=${FQ_ARR1[${KEY}]}
     echo "number of reads in ${KEY} is ${COUNT}"
     TOTAL_READS_SAMPLE1=$((${TOTAL_READS_SAMPLE1}+${COUNT}))
     echo "Total reads in sample ${SAMPLE1_NAME} is now ${TOTAL_READS_SAMPLE1}"
