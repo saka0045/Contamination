@@ -15,6 +15,8 @@ SCRIPT_DIR="/dlmp/sandbox/cgslIS/Yuta/Contamination/scripts"
 QDIR="/usr/local/biotools/oge/ge2011.11/bin/linux-x64"
 QSUB="${QDIR}/qsub"
 QSTAT="${QDIR}/qstat"
+SAMPLE1_PERCENT=""
+SAMPLE2_PERCENT=""
 
 ##################################################
 #FUNCTIONS
@@ -30,6 +32,7 @@ OPTIONS:
     -a  [required] input directory for sample 1
     -b  [required] input directory for sample 2
     -o  [required] output directory
+    -p  [required] percent (0-100) of sample 1 used to contaminate with sample 2
 
 EOF
 }
@@ -70,13 +73,14 @@ function waitForJob () {
 #BEGIN PROCESSING
 ##################################################
 
-while getopts "ha:b:o:" OPTION
+while getopts "ha:b:o:p:" OPTION
 do
     case $OPTION in
 		h) usage ; exit ;;
 		a) SAMPLE1_DIR=${OPTARG} ;;
 		b) SAMPLE2_DIR=${OPTARG} ;;
 		o) OUTDIR=${OPTARG} ;;
+		p) SAMPLE1_PERCENT=${OPTARG} ;;
     esac
 done
 
@@ -92,6 +96,11 @@ fi
 
 if [[ -z ${OUTDIR} ]]; then
     echo -e "ERROR: -o option is required\n"
+    exit 1
+fi
+
+if [[ -z ${SAMPLE1_PERCENT} ]]; then
+    echo -e "ERROR: -p option is required\n"
     exit 1
 fi
 
@@ -160,10 +169,16 @@ fi
 
 echo "Max reads for down sample is ${MAX_READS}"
 
+# Calculate SAMPLE2_PERCENT
+SAMPLE2_PERCENT=$((100 - ${SAMPLE1_PERCENT}))
+echo "Using ${SAMPLE1_PERCENT}% for Sample 1 and ${SAMPLE2_PERCENT}% for Sample 2"
+
+
+
 # Calculate the number of reads each fastq file needs to downsample to for sample 1
 for KEY in ${!FQ_ARR1[@]}; do
     COUNT=${FQ_ARR1[${KEY}]}
-    FRACTION=$(${BC} -l <<< "${COUNT} / ${TOTAL_READS_SAMPLE1}")
+    FRACTION=$(${BC} -l <<< "(${COUNT} / ${TOTAL_READS_SAMPLE1}) * (${SAMPLE1_PERCENT} / 100)")
     # Truncate the TARGET_READ to an integer
     TARGET_READ=$(${BC} <<< "(${FRACTION} * ${MAX_READS}) / 1")
     echo "Target reads for ${KEY} is ${TARGET_READ}"
@@ -172,7 +187,7 @@ done
 # Calculate the number of reads each fastq file needs to downsample to for sample 2
 for KEY in ${!FQ_ARR2[@]}; do
     COUNT=${FQ_ARR2[${KEY}]}
-    FRACTION=$(${BC} -l <<< "${COUNT} / ${TOTAL_READS_SAMPLE2}")
+    FRACTION=$(${BC} -l <<< "(${COUNT} / ${TOTAL_READS_SAMPLE2}) * (${SAMPLE2_PERCENT} / 100)")
     # Truncate the TARGET_READ to an integer
     TARGET_READ=$(${BC} <<< "(${FRACTION} * ${MAX_READS}) / 1")
     echo "Target reads for ${KEY} is ${TARGET_READ}"
