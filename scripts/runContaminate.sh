@@ -108,6 +108,7 @@ fi
 OUTDIR=${OUTDIR%/}
 SAMPLE1_DIR=${SAMPLE1_DIR%/}
 SAMPLE2_DIR=${SAMPLE2_DIR%/}
+LOG_DIR=${OUTDIR}/logs
 QSUB_ARGS="-terse -V -q sandbox.q -m abe -M sakai.yuta@mayo.edu -o ${LOG_DIR} -j y"
 ERR_GENERAL=1
 SAMPLE1_NAME=${SAMPLE1_DIR##*/}
@@ -119,7 +120,6 @@ OUT_SAMPLE1_DIR=${OUTDIR}/${SAMPLE1_NAME}
 OUT_SAMPLE2_DIR=${OUTDIR}/${SAMPLE2_NAME}
 
 # Make directory for log files if it doesn't exist already
-LOG_DIR=${OUTDIR}/logs
 if [[ ! -d "${LOG_DIR}" ]]; then
     mkdir ${LOG_DIR}
     echo "Making logs directory at: ${LOG_DIR}"
@@ -210,6 +210,9 @@ for KEY in ${!FQ_ARR1[@]}; do
     CMD="${QSUB} ${QSUB_ARGS} -N seqtk -l h_vmem=150G ${SCRIPT_DIR}/seqtk.sh -s 100 -i ${SAMPLE1_DIR}/${KEY} -r ${TARGET_READ} -o ${OUT_SAMPLE1_DIR}/${KEY}"
     echo "Executing command: ${CMD}"
     ${CMD}
+    JOB_ID=$(${CMD})
+    COUNT_FASTQ_JOBS+=("${JOB_ID}")
+    echo "COUNT_FASTQ_JOBS+=${JOB_ID}"
 done
 
 # Calculate the number of reads each fastq file needs to downsample to for sample 2 and perform downsample
@@ -223,5 +226,7 @@ for KEY in ${!FQ_ARR2[@]}; do
     echo "Executing command: ${CMD}"
     ${CMD}
 done
+
+waitForJob 86400 60
 
 echo "script is done running!"
