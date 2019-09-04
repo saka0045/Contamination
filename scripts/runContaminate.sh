@@ -192,7 +192,7 @@ else
     MAX_READS=${TOTAL_READS_SAMPLE1}
 fi
 
-echo "Max reads for down sample is ${MAX_READS}"
+echo "Max reads for downsample is ${MAX_READS}"
 
 # Calculate SAMPLE2_PERCENT
 SAMPLE2_PERCENT=$((100 - ${SAMPLE1_PERCENT}))
@@ -200,22 +200,28 @@ echo "Using ${SAMPLE1_PERCENT}% for Sample 1 and ${SAMPLE2_PERCENT}% for Sample 
 
 
 
-# Calculate the number of reads each fastq file needs to downsample to for sample 1
+# Calculate the number of reads each fastq file needs to downsample to for sample 1 and perform downsample
 for KEY in ${!FQ_ARR1[@]}; do
     COUNT=${FQ_ARR1[${KEY}]}
     FRACTION=$(${BC} -l <<< "(${COUNT} / ${TOTAL_READS_SAMPLE1}) * (${SAMPLE1_PERCENT} / 100)")
     # Truncate the TARGET_READ to an integer
     TARGET_READ=$(${BC} <<< "(${FRACTION} * ${MAX_READS}) / 1")
     echo "Target reads for ${KEY} is ${TARGET_READ}"
+    CMD="${QSUB} ${QSUB_ARGS} -N seqtk -l h_vmem=150G ${SCRIPT_DIR}/seqtk.sh -s 100 -i ${SAMPLE1_DIR}/${KEY} -r ${TARGET_READ} -o ${OUT_SAMPLE1_DIR}/${KEY}"
+    echo "Executing command: ${CMD}"
+    ${CMD}
 done
 
-# Calculate the number of reads each fastq file needs to downsample to for sample 2
+# Calculate the number of reads each fastq file needs to downsample to for sample 2 and perform downsample
 for KEY in ${!FQ_ARR2[@]}; do
     COUNT=${FQ_ARR2[${KEY}]}
     FRACTION=$(${BC} -l <<< "(${COUNT} / ${TOTAL_READS_SAMPLE2}) * (${SAMPLE2_PERCENT} / 100)")
     # Truncate the TARGET_READ to an integer
     TARGET_READ=$(${BC} <<< "(${FRACTION} * ${MAX_READS}) / 1")
     echo "Target reads for ${KEY} is ${TARGET_READ}"
+    CMD="${QSUB} ${QSUB_ARGS} -N seqtk -l h_vmem=150G ${SCRIPT_DIR}/seqtk.sh -s 100 -i ${SAMPLE2_DIR}/${KEY} -r ${TARGET_READ} -o ${OUT_SAMPLE2_DIR}/${KEY}"
+    echo "Executing command: ${CMD}"
+    ${CMD}
 done
 
 echo "script is done running!"
