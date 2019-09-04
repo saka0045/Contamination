@@ -121,6 +121,28 @@ SAMPLE2_NAME=${SAMPLE2_DIR##*/}
 RESULT1_FILE=${OUTDIR}/${SAMPLE1_NAME}.results.txt
 RESULT2_FILE=${OUTDIR}/${SAMPLE2_NAME}.results.txt
 COUNT_FASTQ_JOBS=()
+OUT_SAMPLE1_DIR=${OUTDIR}/${SAMPLE1_NAME}
+OUT_SAMPLE2_DIR=${OUTDIR}/${SAMPLE2_NAME}
+
+# Make ${OUT_SAMPLE1_DIR} if it doesn't exist
+if [[ -d ${OUT_SAMPLE1_DIR} ]]; then
+    echo "Output directory ${OUT_SAMPLE1_DIR} already exists!"
+    echo "Aborting script"
+    exit 1
+else
+    mkdir ${OUT_SAMPLE1_DIR}
+    echo "Creating output directory ${OUT_SAMPLE1_DIR}"
+fi
+
+# Make ${OUT_SAMPLE2_DIR} if it doesn't exist
+if [[ -d ${OUT_SAMPLE2_DIR} ]]; then
+    echo "Output directory ${OUT_SAMPLE2_DIR} already exists!"
+    echo "Aborting script"
+    exit 1
+else
+    mkdir ${OUT_SAMPLE2_DIR}
+    echo "Creating output directory ${OUT_SAMPLE2_DIR}"
+fi
 
 # Count lines in fastq file for SAMPLE1_DIR
 for FQ_FILE in ${SAMPLE1_DIR}/*.fastq.gz; do
