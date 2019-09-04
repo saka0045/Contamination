@@ -22,8 +22,8 @@ different reads
 
 OPTIONS:
     -h  [optional] help, show this message
-    -i  [required] input directory for sample 1
-    -d  [required] input directory for sample 2
+    -a  [required] input directory for sample 1
+    -b  [required] input directory for sample 2
     -o  [required] output directory
 
 EOF
@@ -69,19 +69,19 @@ while getopts "hi:d:o:" OPTION
 do
     case $OPTION in
 		h) usage ; exit ;;
-		i) SAMPLE1_DIR=${OPTARG} ;;
-		d) SAMPLE2_DIR=${OPTARG} ;;
+		a) SAMPLE1_DIR=${OPTARG} ;;
+		b) SAMPLE2_DIR=${OPTARG} ;;
 		o) OUTDIR=${OPTARG} ;;
     esac
 done
 
 if [[ -z ${SAMPLE1_DIR} ]]; then
-    echo -e "ERROR: -i option is required\n"
+    echo -e "ERROR: -a option is required\n"
     exit 1
 fi
 
 if [[ -z ${SAMPLE2_DIR} ]]; then
-    echo -e "Error: -d option is required"
+    echo -e "Error: -b option is required"
     exit 1
 fi
 
