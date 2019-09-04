@@ -104,16 +104,8 @@ if [[ -z ${SAMPLE1_PERCENT} ]]; then
     exit 1
 fi
 
-# Make directory for log files if it doesn't exist already
-LOG_DIR=${OUTDIR}/logs
-if [[ ! -d "${LOG_DIR}" ]]; then
-    mkdir ${LOG_DIR}
-    echo "Making logs directory at: ${LOG_DIR}"
-else
-    echo "Log directory ${LOG_DIR} already exists, skipping creation of log directory"
-fi
-
 # Define variables
+OUTDIR=${OUTDIR%/}
 QSUB_ARGS="-terse -V -q sandbox.q -m abe -M sakai.yuta@mayo.edu -o ${LOG_DIR} -j y"
 ERR_GENERAL=1
 SAMPLE1_NAME=${SAMPLE1_DIR##*/}
@@ -123,6 +115,15 @@ RESULT2_FILE=${OUTDIR}/${SAMPLE2_NAME}.results.txt
 COUNT_FASTQ_JOBS=()
 OUT_SAMPLE1_DIR=${OUTDIR}/${SAMPLE1_NAME}
 OUT_SAMPLE2_DIR=${OUTDIR}/${SAMPLE2_NAME}
+
+# Make directory for log files if it doesn't exist already
+LOG_DIR=${OUTDIR}/logs
+if [[ ! -d "${LOG_DIR}" ]]; then
+    mkdir ${LOG_DIR}
+    echo "Making logs directory at: ${LOG_DIR}"
+else
+    echo "Log directory ${LOG_DIR} already exists, skipping creation of log directory"
+fi
 
 # Make ${OUT_SAMPLE1_DIR} if it doesn't exist
 if [[ -d ${OUT_SAMPLE1_DIR} ]]; then
