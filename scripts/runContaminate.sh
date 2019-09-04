@@ -115,7 +115,7 @@ SAMPLE1_NAME=${SAMPLE1_DIR##*/}
 SAMPLE2_NAME=${SAMPLE2_DIR##*/}
 RESULT1_FILE=${OUTDIR}/${SAMPLE1_NAME}.results.txt
 RESULT2_FILE=${OUTDIR}/${SAMPLE2_NAME}.results.txt
-COUNT_FASTQ_JOBS=()
+SEQTK_JOBS=()
 OUT_SAMPLE1_DIR=${OUTDIR}/${SAMPLE1_NAME}
 OUT_SAMPLE2_DIR=${OUTDIR}/${SAMPLE2_NAME}
 
@@ -207,12 +207,12 @@ for KEY in ${!FQ_ARR1[@]}; do
     # Truncate the TARGET_READ to an integer
     TARGET_READ=$(${BC} <<< "(${FRACTION} * ${MAX_READS}) / 1")
     echo "Target reads for ${KEY} is ${TARGET_READ}"
-    CMD="${QSUB} ${QSUB_ARGS} -N seqtk -l h_vmem=150G ${SCRIPT_DIR}/seqtk.sh -s 100 -i ${SAMPLE1_DIR}/${KEY} -r ${TARGET_READ} -o ${OUT_SAMPLE1_DIR}/${KEY}"
+    FASTQ_FILE=${KEY##*/}
+    CMD="${QSUB} ${QSUB_ARGS} -N seqtk -l h_vmem=150G ${SCRIPT_DIR}/seqtk.sh -s 100 -i ${KEY} -r ${TARGET_READ} -o ${OUT_SAMPLE1_DIR}/${FASTQ_FILE}"
     echo "Executing command: ${CMD}"
-    ${CMD}
     JOB_ID=$(${CMD})
-    COUNT_FASTQ_JOBS+=("${JOB_ID}")
-    echo "COUNT_FASTQ_JOBS+=${JOB_ID}"
+    SEQTK_JOBS+=("${JOB_ID}")
+    echo "SEQTK_JOBS+=${JOB_ID}"
 done
 
 # Calculate the number of reads each fastq file needs to downsample to for sample 2 and perform downsample
@@ -222,11 +222,16 @@ for KEY in ${!FQ_ARR2[@]}; do
     # Truncate the TARGET_READ to an integer
     TARGET_READ=$(${BC} <<< "(${FRACTION} * ${MAX_READS}) / 1")
     echo "Target reads for ${KEY} is ${TARGET_READ}"
-    CMD="${QSUB} ${QSUB_ARGS} -N seqtk -l h_vmem=150G ${SCRIPT_DIR}/seqtk.sh -s 100 -i ${SAMPLE2_DIR}/${KEY} -r ${TARGET_READ} -o ${OUT_SAMPLE2_DIR}/${KEY}"
+    FASTQ_FILE=${KEY##*/}
+    CMD="${QSUB} ${QSUB_ARGS} -N seqtk -l h_vmem=150G ${SCRIPT_DIR}/seqtk.sh -s 100 -i ${KEY} -r ${TARGET_READ} -o ${OUT_SAMPLE2_DIR}/${FASTQ_FILE}"
     echo "Executing command: ${CMD}"
-    ${CMD}
+    JOB_ID=$(${CMD})
+    SEQTK_JOBS+=("${JOB_ID}")
+    echo "SEQTK_JOBS+=${JOB_ID}"
 done
 
-waitForJob 86400 60
+for JOB_ID in ${SEQTK_JOBS:-}; do
+        waitForJob ${JOB_ID} 86400 60
+    done
 
 echo "script is done running!"
