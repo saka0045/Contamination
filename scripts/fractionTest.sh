@@ -4,6 +4,8 @@ BC="/usr/bin/bc"
 
 FRACTION=$(${BC} -l <<< "24/100")
 
-FRACTION2=$(${BC} -l <<< "(${FRACTION} * 100)")
+echo "${FRACTION}"
 
-echo "${FRACTION2}"
+TOTAL_READS=$(${BC} <<< "(${FRACTION} * 211) / 1")
+
+echo "${TOTAL_READS}"

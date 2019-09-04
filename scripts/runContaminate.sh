@@ -10,6 +10,11 @@ SAMPLE1_DIR=""
 SAMPLE2_DIR=""
 OUTDIR=""
 CMD=""
+BC="/usr/bin/bc"
+SCRIPT_DIR="/dlmp/sandbox/cgslIS/Yuta/Contamination/scripts"
+QDIR="/usr/local/biotools/oge/ge2011.11/bin/linux-x64"
+QSUB="${QDIR}/qsub"
+QSTAT="${QDIR}/qstat"
 
 ##################################################
 #FUNCTIONS
@@ -100,10 +105,6 @@ else
 fi
 
 # Define variables
-SCRIPT_DIR="/dlmp/sandbox/cgslIS/Yuta/Contamination/scripts"
-QDIR="/usr/local/biotools/oge/ge2011.11/bin/linux-x64"
-QSUB="${QDIR}/qsub"
-QSTAT="${QDIR}/qstat"
 QSUB_ARGS="-terse -V -q sandbox.q -m abe -M sakai.yuta@mayo.edu -o ${LOG_DIR} -j y"
 ERR_GENERAL=1
 SAMPLE1_NAME=${SAMPLE1_DIR##*/}
@@ -158,5 +159,14 @@ else
 fi
 
 echo "Max reads for down sample is ${MAX_READS}"
+
+# Calculate the number of reads each fastq file needs to down sample to
+for KEY in ${!FQ_ARR2[@]}; do
+    COUNT=${FQ_ARR2[${KEY}]}
+    FRACTION=$(${BC} -l <<< "${COUNT} / ${TOTAL_READS_SAMPLE2}")
+    # Truncate the TARGET_READ to an integer
+    TARGET_READ=$(${BC} <<< "(${FRACTION} * ${MAX_READS}) / 1")
+    echo "Target reads for ${KEY} is ${TARGET_READ}"
+done
 
 echo "script is done running!"
