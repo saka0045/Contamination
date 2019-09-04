@@ -4,6 +4,7 @@
 #GLOBAL VARIABLES
 ##################################################
 
+declare -A FQ_ARR1
 declare -A FQ_ARR2
 SAMPLE1_DIR=""
 SAMPLE2_DIR=""
@@ -111,36 +112,22 @@ RESULT1_FILE=${OUTDIR}/${SAMPLE1_NAME}.results.txt
 RESULT2_FILE=${OUTDIR}/${SAMPLE2_NAME}.results.txt
 COUNT_FASTQ_JOBS=()
 
-#Process first sample R1 fastq files
-CMD="${QSUB} ${QSUB_ARGS} -N countFastq ${SCRIPT_DIR}/countFastqFile.sh -s ${SAMPLE1_DIR} -r R1 -f ${RESULT1_FILE}"
-echo "CMD=${CMD}"
-JOB_ID=$(${CMD})
-COUNT_FASTQ_JOBS+=("${JOB_ID}")
-echo "COUNT_FASTQ_JOBS+=${JOB_ID}"
+# Count lines in fastq file for SAMPLE1_DIR
+for FQ_FILE in ${SAMPLE1_DIR}/*.fastq.gz; do
+    echo "Counting lines in ${FQ_FILE}"
+    LINE=$(/bin/zcat ${FQ_FILE} | /usr/bin/wc -l)
+    echo "lines in ${FQ_FILE} is ${LINE}"
+    COUNT=$((${LINE} / 4 ))
+    echo "number of reads in ${FQ_FILE} is ${COUNT}"
+    FQ_ARR1[${FQ_FILE}]=${COUNT}
+done
 
-#Process first sample R2 fastq files
-CMD="${QSUB} ${QSUB_ARGS} -N countFastq ${SCRIPT_DIR}/countFastqFile.sh -s ${SAMPLE1_DIR} -r R2 -f ${RESULT1_FILE}"
-echo "CMD=${CMD}"
-JOB_ID=$(${CMD})
-COUNT_FASTQ_JOBS+=("${JOB_ID}")
-echo "COUNT_FASTQ_JOBS+=${JOB_ID}"
-
-#Process second sample R1 fastq files
-CMD="${QSUB} ${QSUB_ARGS} -N countFastq ${SCRIPT_DIR}/countFastqFile.sh -s ${SAMPLE2_DIR} -r R1 -f ${RESULT2_FILE}"
-echo "CMD=${CMD}"
-JOB_ID=$(${CMD})
-COUNT_FASTQ_JOBS+=("${JOB_ID}")
-echo "COUNT_FASTQ_JOBS+=${JOB_ID}"
-
-#Process second sample R2 fastq files
-CMD="${QSUB} ${QSUB_ARGS} -N countFastq ${SCRIPT_DIR}/countFastqFile.sh -s ${SAMPLE2_DIR} -r R2 -f ${RESULT2_FILE}"
-echo "CMD=${CMD}"
-JOB_ID=$(${CMD})
-COUNT_FASTQ_JOBS+=("${JOB_ID}")
-echo "COUNT_FASTQ_JOBS+=${JOB_ID}"
-
-for JOB_ID in ${COUNT_FASTQ_JOBS:-}; do
-    waitForJob ${JOB_ID} 86400 60
+TOTAL_READS_SAMPLE1=0
+for KEY in ${!FQ_ARR1[@]}; do
+    COUNT=$(${FQ_ARR1[${KEY}]})
+    echo "number of reads in ${KEY} is ${COUNT}"
+    TOTAL_READS_SAMPLE1=$((${TOTAL_READS_SAMPLE1}+${COUNT}))
+    echo "Total reads in sample ${SAMPLE1_NAME} is now ${TOTAL_READS_SAMPLE1}"
 done
 
 echo "script is done running!"

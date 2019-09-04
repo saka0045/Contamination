@@ -43,7 +43,15 @@ done
 RESULT1_FILE=${OUTDIR}/${SAMPLE1_NAME}.results.txt
 RESULT2_FILE=${OUTDIR}/${SAMPLE2_NAME}.results.txt
 
+# If sample name contained "-", the script will not work, below replaces the "-" with "_"
+ALTERED_SAMPLE1_NAME=${SAMPLE1_NAME//-/_}
+ALTERED_SAMPLE2_NAME=${SAMPLE2_NAME//-/_}
+sed -i -e 's/-/_/g' ${RESULT1_FILE}
+sed -i -e 's/-/_/g' ${RESULT2_FILE}
+
 source ${RESULT1_FILE}
 source ${RESULT2_FILE}
 
-echo "${TOTAL_READS_SAMPLE_R1}"
+
+# Calculate the total reads for Sample 1
+echo "total reads R1 = ${TOTAL_READS_006_D01S_R1}"
