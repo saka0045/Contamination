@@ -106,6 +106,8 @@ fi
 
 # Define variables
 OUTDIR=${OUTDIR%/}
+SAMPLE1_DIR=${SAMPLE1_DIR%/}
+SAMPLE2_DIR=${SAMPLE2_DIR%/}
 QSUB_ARGS="-terse -V -q sandbox.q -m abe -M sakai.yuta@mayo.edu -o ${LOG_DIR} -j y"
 ERR_GENERAL=1
 SAMPLE1_NAME=${SAMPLE1_DIR##*/}
