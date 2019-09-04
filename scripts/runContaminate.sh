@@ -136,10 +136,10 @@ done
 TOTAL_READS_SAMPLE1=0
 for KEY in ${!FQ_ARR1[@]}; do
     COUNT=${FQ_ARR1[${KEY}]}
-    echo "number of reads in ${KEY} is ${COUNT}"
     TOTAL_READS_SAMPLE1=$((${TOTAL_READS_SAMPLE1}+${COUNT}))
-    echo "Total reads in sample ${SAMPLE1_NAME} is now ${TOTAL_READS_SAMPLE1}"
 done
+
+echo "Total reads in sample ${SAMPLE1_NAME} is ${TOTAL_READS_SAMPLE1}"
 
 # Count lines in fastq file for SAMPLE2_DIR
 for FQ_FILE in ${SAMPLE2_DIR}/*.fastq.gz; do
@@ -155,10 +155,10 @@ done
 TOTAL_READS_SAMPLE2=0
 for KEY in ${!FQ_ARR2[@]}; do
     COUNT=${FQ_ARR2[${KEY}]}
-    echo "number of reads in ${KEY} is ${COUNT}"
     TOTAL_READS_SAMPLE2=$((${TOTAL_READS_SAMPLE2}+${COUNT}))
-    echo "Total reads in sample ${SAMPLE2_NAME} is now ${TOTAL_READS_SAMPLE2}"
 done
+
+echo "Total reads in sample ${SAMPLE2_NAME} is ${TOTAL_READS_SAMPLE2}"
 
 # Take the lesser of the total sample reads to be the max reads for downsample
 if ((${TOTAL_READS_SAMPLE1} > ${TOTAL_READS_SAMPLE2})); then
