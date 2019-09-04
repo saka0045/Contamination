@@ -207,7 +207,8 @@ for KEY in ${!FQ_ARR1[@]}; do
     # Truncate the TARGET_READ to an integer
     TARGET_READ=$(${BC} <<< "(${FRACTION} * ${MAX_READS}) / 1")
     echo "Target reads for ${KEY} is ${TARGET_READ}"
-    FASTQ_FILE=${KEY##*/}
+    FASTQ_PATH=${KEY##*/}
+    FASTQ_FILE=${FASTQ_PATH%.*}
     CMD="${QSUB} ${QSUB_ARGS} -N seqtk -l h_vmem=150G ${SCRIPT_DIR}/seqtk.sh -s 100 -i ${KEY} -r ${TARGET_READ} -o ${OUT_SAMPLE1_DIR}/${FASTQ_FILE}"
     echo "Executing command: ${CMD}"
     JOB_ID=$(${CMD})
@@ -222,7 +223,7 @@ for KEY in ${!FQ_ARR2[@]}; do
     # Truncate the TARGET_READ to an integer
     TARGET_READ=$(${BC} <<< "(${FRACTION} * ${MAX_READS}) / 1")
     echo "Target reads for ${KEY} is ${TARGET_READ}"
-    FASTQ_FILE=${KEY##*/}
+    FASTQ_PATH=${KEY##*/}
     CMD="${QSUB} ${QSUB_ARGS} -N seqtk -l h_vmem=150G ${SCRIPT_DIR}/seqtk.sh -s 100 -i ${KEY} -r ${TARGET_READ} -o ${OUT_SAMPLE2_DIR}/${FASTQ_FILE}"
     echo "Executing command: ${CMD}"
     JOB_ID=$(${CMD})
