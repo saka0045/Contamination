@@ -65,7 +65,7 @@ function waitForJob () {
 #BEGIN PROCESSING
 ##################################################
 
-while getopts "hi:d:o:" OPTION
+while getopts "ha:b:o:" OPTION
 do
     case $OPTION in
 		h) usage ; exit ;;
