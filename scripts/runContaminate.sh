@@ -150,4 +150,13 @@ for KEY in ${!FQ_ARR2[@]}; do
     echo "Total reads in sample ${SAMPLE2_NAME} is now ${TOTAL_READS_SAMPLE2}"
 done
 
+# Take the lesser of the total sample reads to be the max reads for down sample
+if ((${TOTAL_READS_SAMPLE1} > ${TOTAL_READS_SAMPLE2})); then
+    MAX_READS=${TOTAL_READS_SAMPLE2}
+else
+    MAX_READS=${TOTAL_READS_SAMPLE1}
+fi
+
+echo "Max reads for down sample is ${MAX_READS}"
+
 echo "script is done running!"
