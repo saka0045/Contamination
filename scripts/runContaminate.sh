@@ -122,12 +122,32 @@ for FQ_FILE in ${SAMPLE1_DIR}/*.fastq.gz; do
     FQ_ARR1[${FQ_FILE}]=${COUNT}
 done
 
+# Add all of the reads up
 TOTAL_READS_SAMPLE1=0
 for KEY in ${!FQ_ARR1[@]}; do
     COUNT=${FQ_ARR1[${KEY}]}
     echo "number of reads in ${KEY} is ${COUNT}"
     TOTAL_READS_SAMPLE1=$((${TOTAL_READS_SAMPLE1}+${COUNT}))
     echo "Total reads in sample ${SAMPLE1_NAME} is now ${TOTAL_READS_SAMPLE1}"
+done
+
+# Count lines in fastq file for SAMPLE2_DIR
+for FQ_FILE in ${SAMPLE2_DIR}/*.fastq.gz; do
+    echo "Counting lines in ${FQ_FILE}"
+    LINE=$(/bin/zcat ${FQ_FILE} | /usr/bin/wc -l)
+    echo "lines in ${FQ_FILE} is ${LINE}"
+    COUNT=$((${LINE} / 4 ))
+    echo "number of reads in ${FQ_FILE} is ${COUNT}"
+    FQ_ARR2[${FQ_FILE}]=${COUNT}
+done
+
+# Add all of the reads up
+TOTAL_READS_SAMPLE2=0
+for KEY in ${!FQ_ARR2[@]}; do
+    COUNT=${FQ_ARR2[${KEY}]}
+    echo "number of reads in ${KEY} is ${COUNT}"
+    TOTAL_READS_SAMPLE2=$((${TOTAL_READS_SAMPLE2}+${COUNT}))
+    echo "Total reads in sample ${SAMPLE2_NAME} is now ${TOTAL_READS_SAMPLE2}"
 done
 
 echo "script is done running!"
