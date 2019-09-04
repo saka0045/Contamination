@@ -151,7 +151,7 @@ for KEY in ${!FQ_ARR2[@]}; do
     echo "Total reads in sample ${SAMPLE2_NAME} is now ${TOTAL_READS_SAMPLE2}"
 done
 
-# Take the lesser of the total sample reads to be the max reads for down sample
+# Take the lesser of the total sample reads to be the max reads for downsample
 if ((${TOTAL_READS_SAMPLE1} > ${TOTAL_READS_SAMPLE2})); then
     MAX_READS=${TOTAL_READS_SAMPLE2}
 else
@@ -160,7 +160,16 @@ fi
 
 echo "Max reads for down sample is ${MAX_READS}"
 
-# Calculate the number of reads each fastq file needs to down sample to
+# Calculate the number of reads each fastq file needs to downsample to for sample 1
+for KEY in ${!FQ_ARR1[@]}; do
+    COUNT=${FQ_ARR1[${KEY}]}
+    FRACTION=$(${BC} -l <<< "${COUNT} / ${TOTAL_READS_SAMPLE1}")
+    # Truncate the TARGET_READ to an integer
+    TARGET_READ=$(${BC} <<< "(${FRACTION} * ${MAX_READS}) / 1")
+    echo "Target reads for ${KEY} is ${TARGET_READ}"
+done
+
+# Calculate the number of reads each fastq file needs to downsample to for sample 2
 for KEY in ${!FQ_ARR2[@]}; do
     COUNT=${FQ_ARR2[${KEY}]}
     FRACTION=$(${BC} -l <<< "${COUNT} / ${TOTAL_READS_SAMPLE2}")
