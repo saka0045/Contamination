@@ -20,6 +20,7 @@ SAMPLE2_PERCENT=""
 SEQTK_JOBS=()
 CONCATENATE_FASTQ_JOBS=()
 CONTAMINTE_FASTQ_JOBS=()
+GZIP_FASTQ_JOBS=()
 
 ##################################################
 #FUNCTIONS
@@ -297,5 +298,18 @@ done
 echo "Removing directory: ${OUT_SAMPLE1_DIR}"
 echo "Removing directory: ${OUT_SAMPLE2_DIR}"
 rm -r ${OUT_SAMPLE1_DIR} ${OUT_SAMPLE2_DIR}
+
+# Gzip the fastq files
+for FILE in ${CONTAMINATE_FASTQ_JOBS}/*.fastq; do
+    CMD="${QSUB} ${QSUB_ARGS} -b y -N gzipFastq /bin/gzip ${FILE}"
+    echo "Executing command: ${CMD}"
+    JOB_ID=$(${CMD})
+    GZIP_FASTQ_JOBS+=("${JOB_ID}")
+    echo "GZIP_FASTQ_JOBS+=${JOB_ID}"
+done
+
+for JOB_ID in ${GZIP_FASTQ_JOBS:-}; do
+    waitForJob ${JOB_ID} 86400 10
+done
 
 echo "script is done running!"
