@@ -19,6 +19,7 @@ SAMPLE1_PERCENT=""
 SAMPLE2_PERCENT=""
 SEQTK_JOBS=()
 CONCATENATE_FASTQ_JOBS=()
+CONTAMINTE_FASTQ_JOBS=()
 
 ##################################################
 #FUNCTIONS
@@ -234,7 +235,7 @@ for KEY in ${!FQ_ARR2[@]}; do
 done
 
 for JOB_ID in ${SEQTK_JOBS:-}; do
-    waitForJob ${JOB_ID} 86400 60
+    waitForJob ${JOB_ID} 86400 10
 done
 
 # Concatenate all the lanes for R1 and R2 fastqs for sample 1
@@ -251,8 +252,50 @@ JOB_ID=$(${CMD})
 CONCATENATE_FASTQ_JOBS+=("${JOB_ID}")
 echo "CONCATENATE_FASTQ_JOBS+=${JOB_ID}"
 
+# Concatenate all the lanes for R1 and R2 fastqs for sample 2
+CMD="${QSUB} ${QSUB_ARGS} -N concatenateFastq ${SCRIPT_DIR}/concatenate_fastq.sh -d ${OUT_SAMPLE2_DIR} -o ${OUT_SAMPLE2_DIR} \
+-f ${SAMPLE2_NAME}_R1.fastq -r R1"
+echo "Executing command: ${CMD}"
+JOB_ID=$(${CMD})
+CONCATENATE_FASTQ_JOBS+=("${JOB_ID}")
+echo "CONCATENATE_FASTQ_JOBS+=${JOB_ID}"
+CMD="${QSUB} ${QSUB_ARGS} -N concatenateFastq ${SCRIPT_DIR}/concatenate_fastq.sh -d ${OUT_SAMPLE2_DIR} -o ${OUT_SAMPLE2_DIR} \
+-f ${SAMPLE2_NAME}_R2.fastq -r R2"
+echo "Executing command: ${CMD}"
+JOB_ID=$(${CMD})
+CONCATENATE_FASTQ_JOBS+=("${JOB_ID}")
+echo "CONCATENATE_FASTQ_JOBS+=${JOB_ID}"
+
 for JOB_ID in ${CONCATENATE_FASTQ_JOBS:-}; do
-    waitForJob ${JOB_ID} 86400 60
+    waitForJob ${JOB_ID} 86400 10
 done
+
+# Make directory for contaminated fastqs
+CONATAMINATED_FASTQ_SAMPLE_NAME=${SAMPLE1_NAME}_${SAMPLE1_PERCENT}_${SAMPLE2_NAME}_${SAMPLE2_PERCENT}
+CONTAMINATED_FASTQ_DIR=${OUTDIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}
+mkdir ${CONTAMINATED_FASTQ_DIR}
+
+# Contaminate sample 1 and sample 2
+CMD="${QSUB} ${QSUB_ARGS} -N contaminateFastq ${SCRIPT_DIR}/contaminate_fastq.sh -a ${OUT_SAMPLE1_DIR} -b ${OUT_SAMPLE2_DIR} -o ${CONTAMINATED_FASTQ_DIR} \
+-r R1 -f ${CONATAMINATED_FASTQ_SAMPLE_NAME}"
+echo "Executing command: ${CMD}"
+JOB_ID=$(${CMD})
+CONTAMINATE_FASTQ_JOBS+=("${JOB_ID}")
+echo "CONTAMINATE_FASTQ_JOBS+=${JOB_ID}"
+CMD="${QSUB} ${QSUB_ARGS} -N contaminateFastq ${SCRIPT_DIR}/contaminate_fastq.sh -a ${OUT_SAMPLE1_DIR} -b ${OUT_SAMPLE2_DIR} -o ${CONTAMINATED_FASTQ_DIR} \
+-r R2 -f ${CONATAMINATED_FASTQ_SAMPLE_NAME}"
+echo "Executing command: ${CMD}"
+JOB_ID=$(${CMD})
+CONTAMINATE_FASTQ_JOBS+=("${JOB_ID}")
+echo "CONTAMINATE_FASTQ_JOBS+=${JOB_ID}"
+
+for JOB_ID in ${CONTAMINATE_FASTQ_JOBS:-}; do
+    waitForJob ${JOB_ID} 86400 10
+done
+
+# Remove OUT_SAMPLE1_DIR and OUT_SAMPLE2_DIR
+echo "Removing directory: ${OUT_SAMPLE1_DIR}"
+echo "Removing directory: ${OUT_SAMPLE2_DIR}"
+rm -r ${OUT_SAMPLE1_DIR} ${OUT_SAMPLE2_DIR}
 
 echo "script is done running!"
