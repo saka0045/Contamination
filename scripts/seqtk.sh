@@ -44,4 +44,4 @@ do
     esac
 done
 
-/usr/local/biotools/seqtk/1.3-r106/seqtk sample -s ${SEED} ${INPUT_FASTQ} ${READS} > ${OUT_FASTQ} | xargs /usr/bin/gzip
+/usr/local/biotools/seqtk/1.3-r106/seqtk sample -s ${SEED} ${INPUT_FASTQ} ${READS} > ${OUT_FASTQ}

@@ -109,13 +109,14 @@ OUTDIR=${OUTDIR%/}
 SAMPLE1_DIR=${SAMPLE1_DIR%/}
 SAMPLE2_DIR=${SAMPLE2_DIR%/}
 LOG_DIR=${OUTDIR}/logs
-QSUB_ARGS="-terse -V -q sandbox.q -m abe -M sakai.yuta@mayo.edu -o ${LOG_DIR} -j y"
+QSUB_ARGS="-terse -V -q sandbox.q -m a -M sakai.yuta@mayo.edu -o ${LOG_DIR} -j y"
 ERR_GENERAL=1
 SAMPLE1_NAME=${SAMPLE1_DIR##*/}
 SAMPLE2_NAME=${SAMPLE2_DIR##*/}
 RESULT1_FILE=${OUTDIR}/${SAMPLE1_NAME}.results.txt
 RESULT2_FILE=${OUTDIR}/${SAMPLE2_NAME}.results.txt
 SEQTK_JOBS=()
+GZIP_JOBS=()
 OUT_SAMPLE1_DIR=${OUTDIR}/${SAMPLE1_NAME}
 OUT_SAMPLE2_DIR=${OUTDIR}/${SAMPLE2_NAME}
 
@@ -224,6 +225,7 @@ for KEY in ${!FQ_ARR2[@]}; do
     TARGET_READ=$(${BC} <<< "(${FRACTION} * ${MAX_READS}) / 1")
     echo "Target reads for ${KEY} is ${TARGET_READ}"
     FASTQ_PATH=${KEY##*/}
+    FASTQ_FILE=${FASTQ_PATH%.*}
     CMD="${QSUB} ${QSUB_ARGS} -N seqtk -l h_vmem=150G ${SCRIPT_DIR}/seqtk.sh -s 100 -i ${KEY} -r ${TARGET_READ} -o ${OUT_SAMPLE2_DIR}/${FASTQ_FILE}"
     echo "Executing command: ${CMD}"
     JOB_ID=$(${CMD})
