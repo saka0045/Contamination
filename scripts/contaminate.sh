@@ -71,6 +71,7 @@ function waitForJob () {
         WAIT_TIME=$(($WAIT_TIME + $SLEEP_TIME))
 
         JOB_RUNNING=$(${QSTAT} -u '*' | gawk -F " " -v JID="${JOB_ID}" '$1==JID{print $1}')
+        echo "${JOB_RUNNING}"
     done
 }
 
@@ -238,7 +239,11 @@ for KEY in ${!FQ_ARR2[@]}; do
 done
 
 for JOB_ID in ${SEQTK_JOBS:-}; do
-    waitForJob ${JOB_ID} 86400 10
+    echo "${JOB_ID}"
+done
+
+for JOB_ID in ${SEQTK_JOBS:-}; do
+    waitForJob ${JOB_ID} 86400 60
 done
 
 # Concatenate all the lanes for R1 and R2 fastqs for sample 1
@@ -270,7 +275,7 @@ CONCATENATE_FASTQ_JOBS+=("${JOB_ID}")
 echo "CONCATENATE_FASTQ_JOBS+=${JOB_ID}"
 
 for JOB_ID in ${CONCATENATE_FASTQ_JOBS:-}; do
-    waitForJob ${JOB_ID} 86400 10
+    waitForJob ${JOB_ID} 86400 60
 done
 
 # Make directory for contaminated fastqs
@@ -293,7 +298,7 @@ CONTAMINATE_FASTQ_JOBS+=("${JOB_ID}")
 echo "CONTAMINATE_FASTQ_JOBS+=${JOB_ID}"
 
 for JOB_ID in ${CONTAMINATE_FASTQ_JOBS:-}; do
-    waitForJob ${JOB_ID} 86400 10
+    waitForJob ${JOB_ID} 86400 60
 done
 
 # Remove OUT_SAMPLE1_DIR and OUT_SAMPLE2_DIR
@@ -311,7 +316,7 @@ for FILE in ${CONTAMINATED_FASTQ_DIR}/*.fastq; do
 done
 
 for JOB_ID in ${GZIP_FASTQ_JOBS:-}; do
-    waitForJob ${JOB_ID} 86400 10
+    waitForJob ${JOB_ID} 86400 60
 done
 
 echo "script is done running!"
