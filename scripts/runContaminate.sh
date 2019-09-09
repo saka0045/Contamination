@@ -85,6 +85,6 @@ SAMPLE2_DIR=${SAMPLE2_DIR%/}
 QSUB_ARGS="-terse -V -q sandbox.q -m abe -M sakai.yuta@mayo.edu -o ${LOG_DIR} -j y"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-CMD="${QSUB} ${QSUB_ARGS} -N runContaminate ${SCRIPT_DIR}/contaminate.sh -a ${SAMPLE1_DIR} -b ${SAMPLE2_DIR} -o ${OUTDIR} -p ${SAMPLE1_PERCENT}, -s ${SCRIPT_DIR}"
+CMD="${QSUB} ${QSUB_ARGS} -N runContaminate ${SCRIPT_DIR}/contaminate.sh -a ${SAMPLE1_DIR} -b ${SAMPLE2_DIR} -o ${OUTDIR} -p ${SAMPLE1_PERCENT} -s ${SCRIPT_DIR}"
 echo "Excuting command: ${CMD}"
 ${CMD}
