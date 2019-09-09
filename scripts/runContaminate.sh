@@ -69,12 +69,20 @@ if [[ -z ${SAMPLE1_PERCENT} ]]; then
     exit 1
 fi
 
+# Make log directory if it doesn't exist:
+LOG_DIR=${OUTDIR}/logs
+if [[ ! -d "${LOG_DIR}" ]]; then
+    mkdir ${LOG_DIR}
+    echo "Making logs directory at: ${LOG_DIR}"
+else
+    echo "Log directory ${LOG_DIR} already exists, skipping creation of log directory"
+fi
+
 # Define variables
 OUTDIR=${OUTDIR%/}
 SAMPLE1_DIR=${SAMPLE1_DIR%/}
 SAMPLE2_DIR=${SAMPLE2_DIR%/}
-LOG_DIR=${OUTDIR}/logs
-QSUB_ARGS="-terse -V -q sandbox.q -m a -M sakai.yuta@mayo.edu -o ${LOG_DIR} -j y"
+QSUB_ARGS="-terse -V -q sandbox.q -m abe -M sakai.yuta@mayo.edu -o ${LOG_DIR} -j y"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 CMD="${QSUB} ${QSUB_ARGS} -N runContaminate ${SCRIPT_DIR}/contaminate.sh -a ${SAMPLE1_DIR} -b ${SAMPLE2_DIR} -o ${OUTDIR} -p ${SAMPLE1_PERCENT}, -s ${SCRIPT_DIR}"
