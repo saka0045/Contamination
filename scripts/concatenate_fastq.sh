@@ -53,4 +53,4 @@ fi
 
 SAMPLE_NAME=${DIR##*/}
 
-/bin/find $DIR -maxdepth 1 -name "*${READ}*.fastq.gz" | /bin/sort | xargs /bin/zcat > ${OUTDIR}/${RESULT_FASTQ}
+/bin/find $DIR -maxdepth 1 -name "*${READ}*.fastq" | /bin/sort | xargs /bin/cat > ${OUTDIR}/${RESULT_FASTQ}

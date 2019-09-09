@@ -17,6 +17,8 @@ QSUB="${QDIR}/qsub"
 QSTAT="${QDIR}/qstat"
 SAMPLE1_PERCENT=""
 SAMPLE2_PERCENT=""
+SEQTK_JOBS=()
+CONCATENATE_FASTQ_JOBS=()
 
 ##################################################
 #FUNCTIONS
@@ -115,8 +117,6 @@ SAMPLE1_NAME=${SAMPLE1_DIR##*/}
 SAMPLE2_NAME=${SAMPLE2_DIR##*/}
 RESULT1_FILE=${OUTDIR}/${SAMPLE1_NAME}.results.txt
 RESULT2_FILE=${OUTDIR}/${SAMPLE2_NAME}.results.txt
-SEQTK_JOBS=()
-GZIP_JOBS=()
 OUT_SAMPLE1_DIR=${OUTDIR}/${SAMPLE1_NAME}
 OUT_SAMPLE2_DIR=${OUTDIR}/${SAMPLE2_NAME}
 
@@ -234,7 +234,25 @@ for KEY in ${!FQ_ARR2[@]}; do
 done
 
 for JOB_ID in ${SEQTK_JOBS:-}; do
-        waitForJob ${JOB_ID} 86400 60
-    done
+    waitForJob ${JOB_ID} 86400 60
+done
+
+# Concatenate all the lanes for R1 and R2 fastqs for sample 1
+CMD="${QSUB} ${QSUB_ARGS} -N concatenateFastq ${SCRIPT_DIR}/concatenate_fastq.sh -d ${OUT_SAMPLE1_DIR} -o ${OUT_SAMPLE1_DIR} \
+-f ${SAMPLE1_NAME}_R1.fastq -r R1"
+echo "Executing command: ${CMD}"
+JOB_ID=$(${CMD})
+CONCATENATE_FASTQ_JOBS+=("${JOB_ID}")
+echo "CONCATENATE_FASTQ_JOBS+=${JOB_ID}"
+CMD="${QSUB} ${QSUB_ARGS} -N concatenateFastq ${SCRIPT_DIR}/concatenate_fastq.sh -d ${OUT_SAMPLE1_DIR} -o ${OUT_SAMPLE1_DIR} \
+-f ${SAMPLE1_NAME}_R2.fastq -r R2"
+echo "Executing command: ${CMD}"
+JOB_ID=$(${CMD})
+CONCATENATE_FASTQ_JOBS+=("${JOB_ID}")
+echo "CONCATENATE_FASTQ_JOBS+=${JOB_ID}"
+
+for JOB_ID in ${CONCATENATE_FASTQ_JOBS:-}; do
+    waitForJob ${JOB_ID} 86400 60
+done
 
 echo "script is done running!"
