@@ -300,7 +300,7 @@ echo "Removing directory: ${OUT_SAMPLE2_DIR}"
 rm -r ${OUT_SAMPLE1_DIR} ${OUT_SAMPLE2_DIR}
 
 # Gzip the fastq files
-for FILE in ${CONTAMINATE_FASTQ_JOBS}/*.fastq; do
+for FILE in ${CONTAMINATED_FASTQ_DIR}/*.fastq; do
     CMD="${QSUB} ${QSUB_ARGS} -b y -N gzipFastq /bin/gzip ${FILE}"
     echo "Executing command: ${CMD}"
     JOB_ID=$(${CMD})
