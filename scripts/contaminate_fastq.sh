@@ -33,7 +33,7 @@ EOF
 #BEGIN PROCESSING
 ##################################################
 
-while getopts "ha:b:o:r:" OPTION
+while getopts "ha:b:o:r:f:" OPTION
 do
     case $OPTION in
         h) usage ; exit ;;
