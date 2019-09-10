@@ -238,7 +238,6 @@ for KEY in ${!FQ_ARR2[@]}; do
 done
 
 for JOB_ID in ${SEQTK_JOBS[@]:-}; do
-    echo "Need to wait for Job: ${JOB_ID}"
     waitForJob ${JOB_ID} 86400 60
 done
 
@@ -271,7 +270,6 @@ CONCATENATE_FASTQ_JOBS+=("${JOB_ID}")
 echo "CONCATENATE_FASTQ_JOBS+=${JOB_ID}"
 
 for JOB_ID in ${CONCATENATE_FASTQ_JOBS[@]:-}; do
-    echo "Need to wait for Job: ${JOB_ID}"
     waitForJob ${JOB_ID} 86400 60
 done
 
@@ -295,7 +293,6 @@ CONTAMINATE_FASTQ_JOBS+=("${JOB_ID}")
 echo "CONTAMINATE_FASTQ_JOBS+=${JOB_ID}"
 
 for JOB_ID in ${CONTAMINATE_FASTQ_JOBS[@]:-}; do
-    echo "Need to wait for Job: ${JOB_ID}"
     waitForJob ${JOB_ID} 86400 60
 done
 
@@ -305,17 +302,16 @@ echo "Removing directory: ${OUT_SAMPLE2_DIR}"
 rm -r ${OUT_SAMPLE1_DIR} ${OUT_SAMPLE2_DIR}
 
 # Gzip the fastq files
-for FILE in ${CONTAMINATED_FASTQ_DIR}/*.fastq; do
-    CMD="${QSUB} ${QSUB_ARGS} -b y -N gzipFastq /bin/gzip ${FILE}"
-    echo "Executing command: ${CMD}"
-    JOB_ID=$(${CMD})
-    GZIP_FASTQ_JOBS+=("${JOB_ID}")
-    echo "GZIP_FASTQ_JOBS+=${JOB_ID}"
-done
+#for FILE in ${CONTAMINATED_FASTQ_DIR}/*.fastq; do
+ #   CMD="${QSUB} ${QSUB_ARGS} -b y -N gzipFastq /bin/gzip ${FILE}"
+  #  echo "Executing command: ${CMD}"
+   # JOB_ID=$(${CMD})
+    #GZIP_FASTQ_JOBS+=("${JOB_ID}")
+    #echo "GZIP_FASTQ_JOBS+=${JOB_ID}"
+#done
 
-for JOB_ID in ${GZIP_FASTQ_JOBS[@]:-}; do
-    echo "Need to wait for Job: ${JOB_ID}"
-    waitForJob ${JOB_ID} 86400 60
-done
+#for JOB_ID in ${GZIP_FASTQ_JOBS[@]:-}; do
+#    waitForJob ${JOB_ID} 86400 60
+#done
 
 echo "script is done running!"
