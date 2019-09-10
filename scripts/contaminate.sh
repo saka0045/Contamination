@@ -71,7 +71,6 @@ function waitForJob () {
         WAIT_TIME=$(($WAIT_TIME + $SLEEP_TIME))
 
         JOB_RUNNING=$(${QSTAT} -u '*' | gawk -F " " -v JID="${JOB_ID}" '$1==JID{print $1}')
-        echo "${JOB_RUNNING}"
     done
 }
 
@@ -238,11 +237,8 @@ for KEY in ${!FQ_ARR2[@]}; do
     echo "SEQTK_JOBS+=${JOB_ID}"
 done
 
-for JOB_ID in ${SEQTK_JOBS:-}; do
-    echo "${JOB_ID}"
-done
-
-for JOB_ID in ${SEQTK_JOBS:-}; do
+for JOB_ID in ${SEQTK_JOBS[@]:-}; do
+    echo "Need to wait for Job: ${JOB_ID}"
     waitForJob ${JOB_ID} 86400 60
 done
 
@@ -274,7 +270,8 @@ JOB_ID=$(${CMD})
 CONCATENATE_FASTQ_JOBS+=("${JOB_ID}")
 echo "CONCATENATE_FASTQ_JOBS+=${JOB_ID}"
 
-for JOB_ID in ${CONCATENATE_FASTQ_JOBS:-}; do
+for JOB_ID in ${CONCATENATE_FASTQ_JOBS[@]:-}; do
+    echo "Need to wait for Job: ${JOB_ID}"
     waitForJob ${JOB_ID} 86400 60
 done
 
@@ -297,7 +294,8 @@ JOB_ID=$(${CMD})
 CONTAMINATE_FASTQ_JOBS+=("${JOB_ID}")
 echo "CONTAMINATE_FASTQ_JOBS+=${JOB_ID}"
 
-for JOB_ID in ${CONTAMINATE_FASTQ_JOBS:-}; do
+for JOB_ID in ${CONTAMINATE_FASTQ_JOBS[@]:-}; do
+    echo "Need to wait for Job: ${JOB_ID}"
     waitForJob ${JOB_ID} 86400 60
 done
 
@@ -315,7 +313,8 @@ for FILE in ${CONTAMINATED_FASTQ_DIR}/*.fastq; do
     echo "GZIP_FASTQ_JOBS+=${JOB_ID}"
 done
 
-for JOB_ID in ${GZIP_FASTQ_JOBS:-}; do
+for JOB_ID in ${GZIP_FASTQ_JOBS[@]:-}; do
+    echo "Need to wait for Job: ${JOB_ID}"
     waitForJob ${JOB_ID} 86400 60
 done
 
