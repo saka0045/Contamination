@@ -320,7 +320,7 @@ rm ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_unsorted.bam
 
 # Run Rohan's verifyBamId script
 CMD="${QSUB} ${QSUB_ARGS} -N verifyBamId -l h_vmem=10G ${SCRIPT_DIR}/run_verifybamID_perSample_REV1.sh -i ${BAM_FILE} -o ${CONTAMINATED_FASTQ_DIR} \
--c ${SCRIPT_DIR} -p ${PANEL_BED_PATH} -l"
+-c ${SCRIPT_DIR} -p ${PANEL_BED_PATH} -l TRUE"
 echo "Executing command: ${CMD}"
 JOB_ID=$(${CMD})
 
