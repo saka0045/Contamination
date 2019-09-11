@@ -311,4 +311,7 @@ JOB_ID=$(${CMD})
 
 waitForJob ${JOB_ID} 86400 10
 
+echo "Removing unsorted BAM: ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_unsorted.bam"
+rm ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_unsorted.bam
+
 echo "script is done running!"
