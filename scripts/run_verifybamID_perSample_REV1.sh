@@ -75,7 +75,7 @@ if [ -z "${PANEL_BED}" ];then
     exit 1
 fi
 
-source $CONFIG_DIR/config.txt
+source $CONFIG_DIR/verifyBamIdConfig.txt
 
 VERIFYBAMID_OPTIONS="--ignoreRG --verbose --maxDepth 500 --precise --minQ 25"
 
@@ -127,10 +127,9 @@ function run_verifybamid {
     NAME=$1
     SAMPLE_DIR=$2
     BAM=$3
-    LOGS_DIR=$SAMPLE_DIR/logs
-    echo $SGE -N verifyBamID.$NAME -V -b y $verifybamid_memory -e $LOGS_DIR/$NAME.verifybamid.err -o $SAMPLE_DIR/$NAME.verifybamid  $verifyBamID/verifyBamID --vcf $SAMPLE_DIR/1000GENOME_PANEL.vcf --bam $BAM $VERIFYBAMID_OPTIONS --out $NAME.verifybamid --noPhoneHome
-    $SGE -N verifyBamID.$NAME -V -b y $verifybamid_memory -e $LOGS_DIR/$NAME.verifybamid.err -o $SAMPLE_DIR/$NAME.verifybamid $\
-verifyBamID/verifyBamID --vcf $SAMPLE_DIR/1000GENOME_PANEL.vcf --bam $BAM $VERIFYBAMID_OPTIONS --out $NAME.verifybamid --noPhoneHome
+    CMD="$verifyBamID/verifyBamID --vcf $SAMPLE_DIR/1000GENOME_PANEL.vcf --bam $BAM $VERIFYBAMID_OPTIONS --out $NAME.verifybamid --noPhoneHome"
+    echo "${CMD}"
+    ${CMD}
 }
 
 create_verify_dir

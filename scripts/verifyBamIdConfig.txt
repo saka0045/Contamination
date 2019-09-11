@@ -1,7 +1,7 @@
-verifyBamID=/usr/local/biotools/verifybamid/1.1.3/verifyBamID/bin/
+verifyBamID="/usr/local/biotools/verifybamid/1.1.3/verifyBamID/bin/"
 SNP_1000GENOME_VCF="/dlmp/misc-data/pipelinedata/deployments/mgc/bundle/b37/1000G_phase1.snps.high_confidence.b37.chr.vcf.gz"
 SAMTOOLS="/usr/local/biotools/samtools/1.3.1/samtools"
 USER_EMAIL="sakai.yuta@mayo.edu"
-verifybamid_memory=" -q sandbox.q -l h_vmem=6G -l h_stack=20M -M $USER_EMAIL -m abe -V -cwd"
+verifybamid_memory="-q sandbox.q -l h_vmem=6G -l h_stack=20M -M $USER_EMAIL -m ae -V"
 SGE="/usr/local/biotools/oge/ge2011.11/bin/linux-x64/qsub"
 INTERSECTBED="/usr/local/biotools/bedtools/2.20.1/bin/bedtools intersect"

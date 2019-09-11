@@ -17,6 +17,7 @@ QSUB="${QDIR}/qsub"
 QSTAT="${QDIR}/qstat"
 SENTIEON_ARGS="-v SENTIEON_LICENSE=dlmpcim03.mayo.edu:8990 -l h_vmem=50G -N sentieonBwa"
 REFERENCE_GENOME="/dlmp/misc-data/pipelinedata/deployments/mgc/bwa/GRCh37/hs37d5.fa"
+PANEL_BED_PATH="/dlmp/sandbox/testDefinition/NGS87-MSTR/target.bed"
 SAMPLE1_PERCENT=""
 SAMPLE2_PERCENT=""
 SEQTK_JOBS=()
@@ -311,7 +312,18 @@ JOB_ID=$(${CMD})
 
 waitForJob ${JOB_ID} 86400 10
 
+BAM_FILE="${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}.bam"
+echo "Created BAM file: ${BAM_FILE}"
+
 echo "Removing unsorted BAM: ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_unsorted.bam"
 rm ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_unsorted.bam
+
+# Run Rohan's verifyBamId script
+CMD="${QSUB} ${QSUB_ARGS} -N verifyBamId -l h_vmem=10G ${SCRIPT_DIR}/run_verifybamID_perSample_REV1.sh -i ${BAM_FILE} -o ${CONTAMINATED_FASTQ_DIR} \
+-c ${SCRIPT_DIR} -p ${PANEL_BED_PATH} -l"
+echo "Executing command: ${CMD}"
+JOB_ID=$(${CMD})
+
+waitForJob ${JOB_ID} 86400 10
 
 echo "script is done running!"
