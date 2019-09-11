@@ -23,9 +23,9 @@ usage: $0 options
 DOCS
 
 #REFERENCE=/dlmp/misc-data/pipelinedata/deployments/mgc/bwa/GRCh37/human_g1k_v37.fa
-OUTDIR=""
 
-while getopts "hi:f:r:s:n:o:" OPTION
+
+while getopts "hi:f:r:s:n:" OPTION
 do
 	case $OPTION in
 		h) echo "${DOCS}" ; exit ;;
@@ -34,7 +34,6 @@ do
 		r) declare -r REFERENCE=`readlink -f "$OPTARG"` ;;
 		s) declare -r SampleName=`readlink -f "$OPTARG"` ;;
 		n) declare -r SortFlag="$OPTARG" ;;
-		o) declare -r OUTDIR=`readlink -f "$OPTARG"` ;;
 		?) usage ; exit ;;
 	esac
 done
@@ -43,18 +42,18 @@ if [[ ! -z "${R2File}" ]]; then
 	echo "Using $R1File $R2File and $REFERENCE for $SampleName $LaneName"
 
 	/biotools/biotools/sentieon/201808.03/bin/bwa mem -R "@RG\tID:${SampleName}\tPU:ILLUMINA\tSM:${SampleName}\tPL:ILLUMINA\tLB:LIB\tCN:CGSL" -K 10000000 -t 32 \
-	${REFERENCE} ${R1File} ${R2File} | /usr/local/biotools/samtools/1.3/samtools view -bS > ${OUTDIR}/${SampleName}_unsorted.bam
+	${REFERENCE} ${R1File} ${R2File} | /usr/local/biotools/samtools/1.3/samtools view -bS > ${SampleName}_unsorted.bam
 
 	if [[ "${SortFlag}" = "NAME" ]]; then
-		/usr/local/biotools/samtools/1.3/samtools sort -n -o ${OUTDIR}/${SampleName}.bam ${OUTDIR}/${SampleName}_unsorted.bam
+		/usr/local/biotools/samtools/1.3/samtools sort -n -o ${SampleName}.bam ${SampleName}_unsorted.bam
 	else
-		/usr/local/biotools/samtools/1.3/samtools sort -o ${OUTDIR}/${SampleName}.bam ${OUTDIR}/${SampleName}_unsorted.bam
+		/usr/local/biotools/samtools/1.3/samtools sort -o ${SampleName}.bam ${SampleName}_unsorted.bam
 	fi
 
 	#/usr/local/biotools/samtools/1.3/samtools index ${SampleName}.bam
 else
 	/biotools/biotools/sentieon/201808.03/bin/bwa mem -R "@RG\tID:${SampleName}\tPU:ILLUMINA\tSM:${SampleName}\tPL:ILLUMINA\tLB:LIB\tCN:CGSL" -K 10000000 -t 32 \
-	${REFERENCE} ${R1File} | /usr/local/biotools/samtools/1.3/samtools view -bS > ${OUTDIR}/${SampleName}_junctions_unsorted.bam
-	/usr/local/biotools/samtools/1.3/samtools sort -o ${OUTDIR}/${SampleName}_junctions.bam ${OUTDIR}/${SampleName}_junctions_unsorted.bam
+	${REFERENCE} ${R1File} | /usr/local/biotools/samtools/1.3/samtools view -bS > ${SampleName}_junctions_unsorted.bam
+	/usr/local/biotools/samtools/1.3/samtools sort -o ${SampleName}_junctions.bam ${SampleName}_junctions_unsorted.bam
 	
 fi
