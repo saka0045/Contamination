@@ -15,6 +15,8 @@ SCRIPT_DIR=""
 QDIR="/usr/local/biotools/oge/ge2011.11/bin/linux-x64"
 QSUB="${QDIR}/qsub"
 QSTAT="${QDIR}/qstat"
+SENTIEON_ARGS="-v SENTIEON_LICENSE=dlmpcim03.mayo.edu:8990 -l h_vmem=50G -N sentieonBwa"
+REFERENCE_GENOME="/dlmp/misc-data/pipelinedata/deployments/mgc/bwa/GRCh37/hs37d5.fa"
 SAMPLE1_PERCENT=""
 SAMPLE2_PERCENT=""
 SEQTK_JOBS=()
@@ -301,17 +303,12 @@ echo "Removing directory: ${OUT_SAMPLE1_DIR}"
 echo "Removing directory: ${OUT_SAMPLE2_DIR}"
 rm -r ${OUT_SAMPLE1_DIR} ${OUT_SAMPLE2_DIR}
 
-# Gzip the fastq files
-#for FILE in ${CONTAMINATED_FASTQ_DIR}/*.fastq; do
- #   CMD="${QSUB} ${QSUB_ARGS} -b y -N gzipFastq /bin/gzip ${FILE}"
-  #  echo "Executing command: ${CMD}"
-   # JOB_ID=$(${CMD})
-    #GZIP_FASTQ_JOBS+=("${JOB_ID}")
-    #echo "GZIP_FASTQ_JOBS+=${JOB_ID}"
-#done
+# Align the fastq files using Jag's script
+CMD="${QSUB} ${QSUB_ARGS} ${SENTIEON_ARGS} ${SCRIPT_DIR}/sentieon_bwa.sh -i ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_R1.fastq \
+-f ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_R2.fastq -r ${REFERENCE_GENOME} -s ${CONATAMINATED_FASTQ_SAMPLE_NAME} -n COORD"
+echo "Executing command: ${CMD}"
+JOB_ID=$(${CMD})
 
-#for JOB_ID in ${GZIP_FASTQ_JOBS[@]:-}; do
-#    waitForJob ${JOB_ID} 86400 60
-#done
+waitForJob ${JOB_ID} 86400 60
 
 echo "script is done running!"
