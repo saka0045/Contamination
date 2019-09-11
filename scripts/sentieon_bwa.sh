@@ -46,8 +46,10 @@ if [[ ! -z "${R2File}" ]]; then
 
 	if [[ "${SortFlag}" = "NAME" ]]; then
 		/usr/local/biotools/samtools/1.3/samtools sort -n -o ${SampleName}.bam ${SampleName}_unsorted.bam
+		/usr/local/biotools/samtools/1.3/samtools index ${SampleName}.bam
 	else
 		/usr/local/biotools/samtools/1.3/samtools sort -o ${SampleName}.bam ${SampleName}_unsorted.bam
+		/usr/local/biotools/samtools/1.3/samtools index ${SampleName}.bam
 	fi
 
 	#/usr/local/biotools/samtools/1.3/samtools index ${SampleName}.bam
@@ -55,5 +57,6 @@ else
 	/biotools/biotools/sentieon/201808.03/bin/bwa mem -R "@RG\tID:${SampleName}\tPU:ILLUMINA\tSM:${SampleName}\tPL:ILLUMINA\tLB:LIB\tCN:CGSL" -K 10000000 -t 32 \
 	${REFERENCE} ${R1File} | /usr/local/biotools/samtools/1.3/samtools view -bS > ${SampleName}_junctions_unsorted.bam
 	/usr/local/biotools/samtools/1.3/samtools sort -o ${SampleName}_junctions.bam ${SampleName}_junctions_unsorted.bam
+	/usr/local/biotools/samtools/1.3/samtools index ${SampleName}_junctions.bam
 	
 fi
