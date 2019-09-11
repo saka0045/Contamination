@@ -240,7 +240,7 @@ for KEY in ${!FQ_ARR2[@]}; do
 done
 
 for JOB_ID in ${SEQTK_JOBS[@]:-}; do
-    waitForJob ${JOB_ID} 86400 60
+    waitForJob ${JOB_ID} 86400 10
 done
 
 # Concatenate all the lanes for R1 and R2 fastqs for sample 1
@@ -272,7 +272,7 @@ CONCATENATE_FASTQ_JOBS+=("${JOB_ID}")
 echo "CONCATENATE_FASTQ_JOBS+=${JOB_ID}"
 
 for JOB_ID in ${CONCATENATE_FASTQ_JOBS[@]:-}; do
-    waitForJob ${JOB_ID} 86400 60
+    waitForJob ${JOB_ID} 86400 10
 done
 
 # Make directory for contaminated fastqs
@@ -295,7 +295,7 @@ CONTAMINATE_FASTQ_JOBS+=("${JOB_ID}")
 echo "CONTAMINATE_FASTQ_JOBS+=${JOB_ID}"
 
 for JOB_ID in ${CONTAMINATE_FASTQ_JOBS[@]:-}; do
-    waitForJob ${JOB_ID} 86400 60
+    waitForJob ${JOB_ID} 86400 10
 done
 
 # Remove OUT_SAMPLE1_DIR and OUT_SAMPLE2_DIR
@@ -305,10 +305,11 @@ rm -r ${OUT_SAMPLE1_DIR} ${OUT_SAMPLE2_DIR}
 
 # Align the fastq files using Jag's script
 CMD="${QSUB} ${QSUB_ARGS} ${SENTIEON_ARGS} ${SCRIPT_DIR}/sentieon_bwa.sh -i ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_R1.fastq \
--f ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_R2.fastq -r ${REFERENCE_GENOME} -s ${CONATAMINATED_FASTQ_SAMPLE_NAME} -n COORD"
+-f ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_R2.fastq -r ${REFERENCE_GENOME} -s ${CONATAMINATED_FASTQ_SAMPLE_NAME} -n COORD \
+-o ${CONTAMINATED_FASTQ_DIR}"
 echo "Executing command: ${CMD}"
 JOB_ID=$(${CMD})
 
-waitForJob ${JOB_ID} 86400 60
+waitForJob ${JOB_ID} 86400 10
 
 echo "script is done running!"
