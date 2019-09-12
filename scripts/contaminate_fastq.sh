@@ -9,6 +9,7 @@ OUT_SAMPLE2_DIR=""
 CONTAMINATED_FASTQ_DIR=""
 READ=""
 CONATAMINATED_FASTQ_SAMPLE_NAME=""
+LANE=""
 
 ##################################################
 #FUNCTIONS
@@ -25,15 +26,16 @@ OPTIONS:
     -o  [required] output directory to save the contaminated fastqs
     -r  [required] R1 or R2
     -f  [required] contaminated fastq sample name
+    -l  [required] lane; L001, L002, etc.
 
 EOF
 }
 
 ##################################################
-#BEGIN PROCESSING
-##################################################
+##BEGIN PROCESSING
+###################################################
 
-while getopts "ha:b:o:r:f:" OPTION
+while getopts "ha:b:o:r:f:l:" OPTION
 do
     case $OPTION in
         h) usage ; exit ;;
@@ -42,11 +44,12 @@ do
         o) CONTAMINATED_FASTQ_DIR=${OPTARG} ;;
         r) READ=${OPTARG} ;;
         f) CONATAMINATED_FASTQ_SAMPLE_NAME=${OPTARG} ;;
+        l) LANE=${OPTARG} ;;
     esac
 done
 
 SAMPLE1_NAME=${OUT_SAMPLE1_DIR##*/}
 SAMPLE2_NAME=${OUT_SAMPLE2_DIR##*/}
 
-/bin/cat ${OUT_SAMPLE1_DIR}/${SAMPLE1_NAME}_${READ}.fastq ${OUT_SAMPLE2_DIR}/${SAMPLE2_NAME}_${READ}.fastq > \
-${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_${READ}.fastq
+/bin/cat ${OUT_SAMPLE1_DIR}/${SAMPLE1_NAME}_${LANE}_${READ}.fastq ${OUT_SAMPLE2_DIR}/${SAMPLE2_NAME}_${LANE}_${READ}.fastq > \
+${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_${LANE}_${READ}.fastq

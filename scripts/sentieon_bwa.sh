@@ -22,34 +22,44 @@ usage: $0 options
 # 
 DOCS
 
-#REFERENCE=/dlmp/misc-data/pipelinedata/deployments/mgc/bwa/GRCh37/human_g1k_v37.fa
+##################################################
+#Global Variables
+##################################################
 
+R1File=""
+R2File=""
+REFERENCE=""
+SampleName=""
+SortFlag=""
+LANE=""
 
-while getopts "hi:f:r:s:n:" OPTION
+##################################################
+#BEGIN PROCESSING
+##################################################
+
+while getopts "hi:f:r:s:n:l:" OPTION
 do
-	case $OPTION in
-		h) echo "${DOCS}" ; exit ;;
-		i) declare -r R1File=`readlink -f "$OPTARG"` ;;
-		f) declare -r R2File=`readlink -f "$OPTARG"` ;;
-		r) declare -r REFERENCE=`readlink -f "$OPTARG"` ;;
-		s) declare -r SampleName=`readlink -f "$OPTARG"` ;;
-		n) declare -r SortFlag="$OPTARG" ;;
-		?) usage ; exit ;;
-	esac
+    case $OPTION in
+        h) usage ; exit ;;
+        i) R1File=${OPTARG} ;;
+        f) R2File=${OPTARG} ;;
+        r) REFERENCE=${OPTARG} ;;
+        s) SampleName=${OPTARG} ;;
+        n) SortFlag=${OPTARG} ;;
+        l) LANE=${OPTARG} ;;
+    esac
 done
 
 if [[ ! -z "${R2File}" ]]; then
-	echo "Using $R1File $R2File and $REFERENCE for $SampleName $LaneName"
+	echo "Using $R1File $R2File and $REFERENCE for $SampleName ${LANE}"
 
 	/biotools/biotools/sentieon/201808.03/bin/bwa mem -R "@RG\tID:${SampleName}\tPU:ILLUMINA\tSM:${SampleName}\tPL:ILLUMINA\tLB:LIB\tCN:CGSL" -K 10000000 -t 32 \
-	${REFERENCE} ${R1File} ${R2File} | /usr/local/biotools/samtools/1.3/samtools view -bS > ${SampleName}_unsorted.bam
+	${REFERENCE} ${R1File} ${R2File} | /usr/local/biotools/samtools/1.3/samtools view -bS > ${SampleName}_${LANE}_unsorted.bam
 
 	if [[ "${SortFlag}" = "NAME" ]]; then
-		/usr/local/biotools/samtools/1.3/samtools sort -n -o ${SampleName}.bam ${SampleName}_unsorted.bam
-		/usr/local/biotools/samtools/1.3/samtools index ${SampleName}.bam
+		/usr/local/biotools/samtools/1.3/samtools sort -n -o ${SampleName}_${LANE}.bam ${SampleName}_${LANE}_unsorted.bam
 	else
-		/usr/local/biotools/samtools/1.3/samtools sort -o ${SampleName}.bam ${SampleName}_unsorted.bam
-		/usr/local/biotools/samtools/1.3/samtools index ${SampleName}.bam
+		/usr/local/biotools/samtools/1.3/samtools sort -o ${SampleName}_${LANE}.bam ${SampleName}_${LANE}_unsorted.bam
 	fi
 
 	#/usr/local/biotools/samtools/1.3/samtools index ${SampleName}.bam
@@ -57,6 +67,5 @@ else
 	/biotools/biotools/sentieon/201808.03/bin/bwa mem -R "@RG\tID:${SampleName}\tPU:ILLUMINA\tSM:${SampleName}\tPL:ILLUMINA\tLB:LIB\tCN:CGSL" -K 10000000 -t 32 \
 	${REFERENCE} ${R1File} | /usr/local/biotools/samtools/1.3/samtools view -bS > ${SampleName}_junctions_unsorted.bam
 	/usr/local/biotools/samtools/1.3/samtools sort -o ${SampleName}_junctions.bam ${SampleName}_junctions_unsorted.bam
-	/usr/local/biotools/samtools/1.3/samtools index ${SampleName}_junctions.bam
 	
 fi
