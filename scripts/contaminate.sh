@@ -15,7 +15,7 @@ SCRIPT_DIR=""
 QDIR="/usr/local/biotools/oge/ge2011.11/bin/linux-x64"
 QSUB="${QDIR}/qsub"
 QSTAT="${QDIR}/qstat"
-SENTIEON_ARGS="-v SENTIEON_LICENSE=dlmpcim03.mayo.edu:8990 -l h_vmem=50G -N sentieonBwa"
+SENTIEON_ARGS="-v SENTIEON_LICENSE=dlmpcim03.mayo.edu:8990 -l h_vmem=100G -N sentieonBwa"
 REFERENCE_GENOME="/dlmp/misc-data/pipelinedata/deployments/mgc/bwa/GRCh37/hs37d5.fa"
 PANEL_BED_PATH="/dlmp/sandbox/testDefinition/NGS87-MSTR/target.bed"
 SAMPLE1_PERCENT=""
@@ -241,7 +241,7 @@ for KEY in ${!FQ_ARR2[@]}; do
 done
 
 for JOB_ID in ${SEQTK_JOBS[@]:-}; do
-    waitForJob ${JOB_ID} 86400 10
+    waitForJob ${JOB_ID} 86400 60
 done
 
 # Concatenate all the lanes for R1 and R2 fastqs for sample 1
@@ -273,7 +273,7 @@ CONCATENATE_FASTQ_JOBS+=("${JOB_ID}")
 echo "CONCATENATE_FASTQ_JOBS+=${JOB_ID}"
 
 for JOB_ID in ${CONCATENATE_FASTQ_JOBS[@]:-}; do
-    waitForJob ${JOB_ID} 86400 10
+    waitForJob ${JOB_ID} 86400 60
 done
 
 # Make directory for contaminated fastqs
@@ -296,7 +296,7 @@ CONTAMINATE_FASTQ_JOBS+=("${JOB_ID}")
 echo "CONTAMINATE_FASTQ_JOBS+=${JOB_ID}"
 
 for JOB_ID in ${CONTAMINATE_FASTQ_JOBS[@]:-}; do
-    waitForJob ${JOB_ID} 86400 10
+    waitForJob ${JOB_ID} 86400 60
 done
 
 # Remove OUT_SAMPLE1_DIR and OUT_SAMPLE2_DIR
@@ -310,13 +310,10 @@ CMD="${QSUB} ${QSUB_ARGS} ${SENTIEON_ARGS} -wd ${CONTAMINATED_FASTQ_DIR} ${SCRIP
 echo "Executing command: ${CMD}"
 JOB_ID=$(${CMD})
 
-waitForJob ${JOB_ID} 86400 10
+waitForJob ${JOB_ID} 86400 60
 
 BAM_FILE="${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}.bam"
 echo "Created BAM file: ${BAM_FILE}"
-
-echo "Removing unsorted BAM: ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_unsorted.bam"
-rm ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_unsorted.bam
 
 # Run Rohan's verifyBamId script
 CMD="${QSUB} ${QSUB_ARGS} -N verifyBamId -l h_vmem=10G ${SCRIPT_DIR}/run_verifybamID_perSample_REV1.sh -i ${BAM_FILE} -o ${CONTAMINATED_FASTQ_DIR} \
@@ -324,6 +321,12 @@ CMD="${QSUB} ${QSUB_ARGS} -N verifyBamId -l h_vmem=10G ${SCRIPT_DIR}/run_verifyb
 echo "Executing command: ${CMD}"
 JOB_ID=$(${CMD})
 
-waitForJob ${JOB_ID} 86400 10
+waitForJob ${JOB_ID} 86400 60
+
+# Cleanup
+echo "Removing fastq files: ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_R1.fastq and ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_R2.fastq"
+rm ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_R1.fastq ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_R2.fastq
+echo "Removing unsorted BAM: ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_unsorted.bam"
+rm ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_unsorted.bam
 
 echo "script is done running!"
