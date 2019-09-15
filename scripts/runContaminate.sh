@@ -14,6 +14,7 @@ QDIR="/usr/local/biotools/oge/ge2011.11/bin/linux-x64"
 QSUB="${QDIR}/qsub"
 QSTAT="${QDIR}/qstat"
 SAMPLE1_PERCENT=""
+PANEL_BED_PATH=
 
 ##################################################
 #FUNCTIONS
@@ -30,6 +31,7 @@ OPTIONS:
     -b  [required] input directory for sample 2
     -o  [required] output directory
     -p  [required] percent (0-100) of sample 1 used to contaminate with sample 2
+    -t  [required] path to target.bed to run verifyBamid
 
 EOF
 }
@@ -38,7 +40,7 @@ EOF
 #BEGIN PROCESSING
 ##################################################
 
-while getopts "ha:b:o:p:" OPTION
+while getopts "ha:b:o:p:t:" OPTION
 do
     case $OPTION in
 		h) usage ; exit ;;
@@ -46,6 +48,7 @@ do
 		b) SAMPLE2_DIR=${OPTARG} ;;
 		o) OUTDIR=${OPTARG} ;;
 		p) SAMPLE1_PERCENT=${OPTARG} ;;
+		t) PANEL_BED_PATH=${OPTARG} ;;
     esac
 done
 
@@ -69,6 +72,11 @@ if [[ -z ${SAMPLE1_PERCENT} ]]; then
     exit 1
 fi
 
+if [[ -z ${PANEL_BED_PATH} ]]; then
+    echo -e "ERROR: -t option is required\n"
+    exit 1
+fi
+
 # Make log directory if it doesn't exist:
 LOG_DIR=${OUTDIR}/logs
 if [[ ! -d "${LOG_DIR}" ]]; then
@@ -85,6 +93,7 @@ SAMPLE2_DIR=${SAMPLE2_DIR%/}
 QSUB_ARGS="-terse -V -q sandbox.q -m abe -M sakai.yuta@mayo.edu -o ${LOG_DIR} -j y"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-CMD="${QSUB} ${QSUB_ARGS} -N runContaminate ${SCRIPT_DIR}/contaminate.sh -a ${SAMPLE1_DIR} -b ${SAMPLE2_DIR} -o ${OUTDIR} -p ${SAMPLE1_PERCENT} -s ${SCRIPT_DIR}"
+CMD="${QSUB} ${QSUB_ARGS} -N runContaminate ${SCRIPT_DIR}/contaminate.sh -a ${SAMPLE1_DIR} -b ${SAMPLE2_DIR} -o ${OUTDIR} \
+-p ${SAMPLE1_PERCENT} -s ${SCRIPT_DIR} -t ${PANEL_BED_PATH}"
 echo "Excuting command: ${CMD}"
 ${CMD}

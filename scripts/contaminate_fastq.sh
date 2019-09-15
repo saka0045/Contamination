@@ -10,6 +10,8 @@ CONTAMINATED_FASTQ_DIR=""
 READ=""
 CONATAMINATED_FASTQ_SAMPLE_NAME=""
 LANE=""
+SAMPLE1_NAME=""
+SAMPLE2_NAME=""
 
 ##################################################
 #FUNCTIONS
@@ -39,8 +41,8 @@ while getopts "ha:b:o:r:f:l:" OPTION
 do
     case $OPTION in
         h) usage ; exit ;;
-        a) OUT_SAMPLE1_DIR=${OPTARG} ;;
-        b) OUT_SAMPLE2_DIR=${OPTARG} ;;
+        a) SAMPLE1_NAME=${OPTARG} ;;
+        b) SAMPLE2_NAME=${OPTARG} ;;
         o) CONTAMINATED_FASTQ_DIR=${OPTARG} ;;
         r) READ=${OPTARG} ;;
         f) CONATAMINATED_FASTQ_SAMPLE_NAME=${OPTARG} ;;
@@ -48,8 +50,5 @@ do
     esac
 done
 
-SAMPLE1_NAME=${OUT_SAMPLE1_DIR##*/}
-SAMPLE2_NAME=${OUT_SAMPLE2_DIR##*/}
-
-/bin/cat ${OUT_SAMPLE1_DIR}/${SAMPLE1_NAME}_${LANE}_${READ}*.fastq ${OUT_SAMPLE2_DIR}/${SAMPLE2_NAME}_${LANE}_${READ}*.fastq > \
+/bin/cat ${CONTAMINATED_FASTQ_DIR}/${SAMPLE1_NAME}_${LANE}_${READ}*.fastq ${CONTAMINATED_FASTQ_DIR}/${SAMPLE2_NAME}_${LANE}_${READ}*.fastq > \
 ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_${LANE}_${READ}.fastq
