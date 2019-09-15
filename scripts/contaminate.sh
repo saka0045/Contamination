@@ -310,7 +310,7 @@ echo "Executing command: ${CMD}"
 JOB_ID=$(${CMD})
 
 waitForJob ${JOB_ID} 86400 60
-: << TEST
+
 # Cleanup
 echo "Removing fastq files from ${CONTAMINATED_FASTQ_DIR}"
 rm ${CONTAMINATED_FASTQ_DIR}/*.fastq
@@ -318,5 +318,5 @@ echo "Removing unsorted BAMs"
 rm ${CONTAMINATED_FASTQ_DIR}/*.unsorted.bam
 echo "Removing unmerged BAMs"
 rm ${CONTAMINATED_FASTQ_DIR}/*L00*.bam
-TEST
+
 echo "script is done running!"
