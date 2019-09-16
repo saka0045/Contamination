@@ -8,5 +8,5 @@ scripts/__pycache__/
 Hereditary/target.bed
 Hereditary/probes.bed
 Publications/*
-Large_Cancer/fastq/*
-Large_Cancer/test/*
+Hereditary/IDT/*
+Large_Cancer/*
