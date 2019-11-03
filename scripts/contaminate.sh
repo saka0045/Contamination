@@ -271,7 +271,7 @@ echo "CONTAMINATE_FASTQ_JOBS+=${JOB_ID}"
 for JOB_ID in ${CONTAMINATE_FASTQ_JOBS[@]:-}; do
     waitForJob ${JOB_ID} 86400 60
 done
-
+: <<'END'
 # Align LOO1 fastq files using Jag's script
 CMD="${QSUB} ${QSUB_ARGS} ${SENTIEON_ARGS} -wd ${CONTAMINATED_FASTQ_DIR} ${SCRIPT_DIR}/sentieon_bwa.sh -i ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_L001_R1.fastq \
 -f ${CONTAMINATED_FASTQ_DIR}/${CONATAMINATED_FASTQ_SAMPLE_NAME}_L001_R2.fastq -r ${REFERENCE_GENOME} -s ${CONATAMINATED_FASTQ_SAMPLE_NAME} -n COORD -l L001"
@@ -318,5 +318,5 @@ echo "Removing unsorted BAMs"
 rm ${CONTAMINATED_FASTQ_DIR}/*.unsorted.bam
 echo "Removing unmerged BAMs"
 rm ${CONTAMINATED_FASTQ_DIR}/*L00*.bam
-
+END
 echo "script is done running!"
