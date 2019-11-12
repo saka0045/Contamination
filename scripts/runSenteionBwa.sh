@@ -92,16 +92,16 @@ else
 fi
 
 # Align LOO1 fastq files using Jag's script
-CMD="${QSUB} ${QSUB_ARGS} ${SENTIEON_ARGS} -wd ${INPUT_DIR} ${SCRIPT_DIR}/sentieon_bwa.sh -i ${INPUT_DIR}/${SAMPLE_NAME}_L001_R1.fastq.gz \
--f ${INPUT_DIR}/${SAMPLE_NAME}_L001_R2.fastq.gz -r ${REFERENCE_GENOME} -s ${SAMPLE_NAME} -n COORD -l L001"
+CMD="${QSUB} ${QSUB_ARGS} ${SENTIEON_ARGS} -wd ${INPUT_DIR} ${SCRIPT_DIR}/sentieon_bwa.sh -i ${INPUT_DIR}/${SAMPLE_NAME}_L001_R1*.fastq.gz \
+-f ${INPUT_DIR}/${SAMPLE_NAME}_L001_R2*.fastq.gz -r ${REFERENCE_GENOME} -s ${SAMPLE_NAME} -n COORD -l L001"
 echo "Executing command: ${CMD}"
 JOB_ID=$(${CMD})
 ALIGNMENT_JOBS+=("${JOB_ID}")
 echo "ALIGNMENT_JOBS+=${JOB_ID}"
 
 # Align LOO2 fastq files using Jag's script
-CMD="${QSUB} ${QSUB_ARGS} ${SENTIEON_ARGS} -wd ${INPUT_DIR} ${SCRIPT_DIR}/sentieon_bwa.sh -i ${INPUT_DIR}/${SAMPLE_NAME}_L002_R1.fastq.gz \
--f ${INPUT_DIR}/${SAMPLE_NAME}_L002_R2.fastq.gz -r ${REFERENCE_GENOME} -s ${SAMPLE_NAME} -n COORD -l L002"
+CMD="${QSUB} ${QSUB_ARGS} ${SENTIEON_ARGS} -wd ${INPUT_DIR} ${SCRIPT_DIR}/sentieon_bwa.sh -i ${INPUT_DIR}/${SAMPLE_NAME}_L002_R1*.fastq.gz \
+-f ${INPUT_DIR}/${SAMPLE_NAME}_L002_R2*.fastq.gz -r ${REFERENCE_GENOME} -s ${SAMPLE_NAME} -n COORD -l L002"
 echo "Executing command: ${CMD}"
 JOB_ID=$(${CMD})
 ALIGNMENT_JOBS+=("${JOB_ID}")
