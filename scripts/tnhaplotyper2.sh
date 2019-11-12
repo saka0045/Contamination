@@ -48,3 +48,4 @@ OUTDIR=${OUTDIR%/}
 CMD="${SENTION_DRIVER} -i ${INPUT_BAM} -r ${REFERENCE_FASTA} --algo ${ALGO} --tumor_sample ${SAMPLE_NAME} \
 ${OUTDIR}/${SAMPLE_NAME}.vcf.gz"
 echo "Executing command: ${CMD}"
+${CMD}
