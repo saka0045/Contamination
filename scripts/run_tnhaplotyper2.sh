@@ -9,8 +9,10 @@ REFERENCE_FASTA="/dlmp/misc-data/pipelinedata/deployments/mgc/bwa/GRCh37/hs37d5.
 OUTDIR=""
 SAMPLE_NAME=""
 CMD=""
-SENTION_DRIVER="/biotools/biotools/sentieon/201808.03/bin/sentieon driver"
-ALGO="TNhaplotyper2"
+QDIR="/usr/local/biotools/oge/ge2011.11/bin/linux-x64"
+QSUB="${QDIR}/qsub"
+SENTIEON_ARGS="-v SENTIEON_LICENSE=dlmpcim03.mayo.edu:8990 -l h_vmem=30G -N tnhaplotyper2"
+SCRIPT_DIR="/dlmp/sandbox/cgslIS/Yuta/Contamination/scripts"
 
 ##################################################
 #FUNCTIONS
@@ -18,7 +20,7 @@ ALGO="TNhaplotyper2"
 
 function usage(){
 cat << EOF
-command to run TNhaplotyper2
+command to qsub and run TNhaplotyper2
 
 OPTIONS:
     -h  [optional] help, show this message
@@ -42,8 +44,17 @@ do
 done
 
 INPUT_DIR=${INPUT_DIR%/}
+LOG_DIR=${INPUT_DIR}/logs
+QSUB_ARGS="-terse -V -q sandbox.q -m abe -M sakai.yuta@mayo.edu -o ${LOG_DIR} -j y"
 
-CMD="${SENTION_DRIVER} -i ${INPUT_DIR}/${SAMPLE_NAME}.bam -r ${REFERENCE_FASTA} --algo ${ALGO} --tumor_sample \
-${SAMPLE_NAME} ${INPUT_DIR}/${SAMPLE_NAME}.vcf.gz"
+# Make logs directory if it doesn't exist
+if [[ ! -d "${LOG_DIR}" ]]; then
+    mkdir ${LOG_DIR}
+    echo "Making logs directory at: ${LOG_DIR}"
+else
+    echo "Log directory ${LOG_DIR} already exists, skipping creation of log directory"
+fi
+
+CMD="${QSUB} ${QSUB_ARGS} ${SENTIEON_ARGS} -wd ${INPUT_DIR} ${SCRIPT_DIR}/tnhaplotyper2.sh -i ${INPUT_DIR} -s ${SAMPLE_NAME}"
 echo "Executing command: ${CMD}"
 ${CMD}
