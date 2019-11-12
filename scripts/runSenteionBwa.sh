@@ -81,7 +81,7 @@ done
 
 INPUT_DIR=${INPUT_DIR%/}
 LOG_DIR=${INPUT_DIR}/logs
-QSUB_ARGS="-terse -V -q sandbox.q -m abe -M sakai.yuta@mayo.edu -o ${LOG_DIR} -j y"
+QSUB_ARGS="-terse -V -q sandbox.q -m a -M sakai.yuta@mayo.edu -o ${LOG_DIR} -j y"
 
 # Make logs directory if it doesn't exist
 if [[ ! -d "${LOG_DIR}" ]]; then
@@ -92,16 +92,16 @@ else
 fi
 
 # Align LOO1 fastq files using Jag's script
-CMD="${QSUB} ${QSUB_ARGS} ${SENTIEON_ARGS} -wd ${INPUT_DIR} ${SCRIPT_DIR}/sentieon_bwa.sh -i ${INPUT_DIR}/${SAMPLE_NAME}_L001_R1.fastq \
--f ${INPUT_DIR}/${SAMPLE_NAME}_L001_R2.fastq -r ${REFERENCE_GENOME} -s ${SAMPLE_NAME} -n COORD -l L001"
+CMD="${QSUB} ${QSUB_ARGS} ${SENTIEON_ARGS} -wd ${INPUT_DIR} ${SCRIPT_DIR}/sentieon_bwa.sh -i ${INPUT_DIR}/${SAMPLE_NAME}_L001_R1.fastq.gz \
+-f ${INPUT_DIR}/${SAMPLE_NAME}_L001_R2.fastq.gz -r ${REFERENCE_GENOME} -s ${SAMPLE_NAME} -n COORD -l L001"
 echo "Executing command: ${CMD}"
 JOB_ID=$(${CMD})
 ALIGNMENT_JOBS+=("${JOB_ID}")
 echo "ALIGNMENT_JOBS+=${JOB_ID}"
 
 # Align LOO2 fastq files using Jag's script
-CMD="${QSUB} ${QSUB_ARGS} ${SENTIEON_ARGS} -wd ${INPUT_DIR} ${SCRIPT_DIR}/sentieon_bwa.sh -i ${INPUT_DIR}/${SAMPLE_NAME}_L002_R1.fastq \
--f ${INPUT_DIR}/${SAMPLE_NAME}_L002_R2.fastq -r ${REFERENCE_GENOME} -s ${SAMPLE_NAME} -n COORD -l L002"
+CMD="${QSUB} ${QSUB_ARGS} ${SENTIEON_ARGS} -wd ${INPUT_DIR} ${SCRIPT_DIR}/sentieon_bwa.sh -i ${INPUT_DIR}/${SAMPLE_NAME}_L002_R1.fastq.gz \
+-f ${INPUT_DIR}/${SAMPLE_NAME}_L002_R2.fastq.gz -r ${REFERENCE_GENOME} -s ${SAMPLE_NAME} -n COORD -l L002"
 echo "Executing command: ${CMD}"
 JOB_ID=$(${CMD})
 ALIGNMENT_JOBS+=("${JOB_ID}")
