@@ -8,4 +8,5 @@ frequency_table <- sapply(read.csv(args[1]), as.numeric)
 
 # Plot histogram
 pdf(file = "allele_frequency.pdf", width = 8, height = 8)
-hist(frequency_table, xlab = "Allele Frequency", ylab = "Count", main = paste("Histogram of Allele Frequency for", args[2]))
+hist(frequency_table, freq = TRUE, xlab = "Allele Frequency", ylab = "Count", 
+     main = paste("Histogram of Allele Frequency for", args[2]))
